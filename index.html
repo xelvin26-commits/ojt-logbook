@@ -6,6 +6,8 @@
 <title>OJT Logbook</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
   html, body { margin: 0; padding: 0; background: #F5F0DC; }
   #root { min-height: 100vh; }
@@ -63,79 +65,72 @@ const fmtElapsed = ms => {
   return `${h}h ${pad(m)}m`;
 };
 
-/* ---------- standalone persistence (this device's browser only, via localStorage) ---------- */
-/* Replaces Claude's shared "db" capability, which only exists inside claude.ai artifacts.
-   This shim keeps the exact same collection/doc API so the rest of the app is unchanged. */
-function createLocalDb(storageKey) {
-  const listeners = new Set();
-  const read = () => {
-    try {
-      return JSON.parse(window.localStorage.getItem(storageKey) || "{}");
-    } catch {
-      return {};
-    }
-  };
-  const write = (data) => {
-    try {
-      window.localStorage.setItem(storageKey, JSON.stringify(data));
-    } catch {
-      /* storage unavailable (private browsing, quota, etc.) — fails quietly like the old shim did */
-    }
-    listeners.forEach((fn) => fn());
-  };
-  const makeDoc = (path) => ({
-    async get() {
-      const data = read();
-      const val = data[path];
-      return { exists: val !== undefined, data: () => val };
-    },
-    async set(value) {
-      const data = read();
-      data[path] = value;
-      write(data);
-    },
-    async delete() {
-      const data = read();
-      delete data[path];
-      write(data);
-    },
-  });
-  const makeCollection = (path) => {
-    const prefix = path + "/";
-    const self = {
-      doc: (id) => makeDoc(prefix + id),
+/* ---------- shared persistence: Firebase Realtime Database (free Spark plan) ---------- */
+/* Same collection/doc API as before, so the rest of the app is unchanged. Every document
+   lives flat under "store/", with "/" in its path swapped for "|" (e.g. store/trainees|ID|records|RID). */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDmX24S5wc_EgvyV-YiuCwZoKqF4koRHeI",
+  authDomain: "ojt-attendance-d6ccb.firebaseapp.com",
+  databaseURL: "https://ojt-attendance-d6ccb-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ojt-attendance-d6ccb",
+  storageBucket: "ojt-attendance-d6ccb.firebasestorage.app",
+  messagingSenderId: "310157830000",
+  appId: "1:310157830000:web:1e6fe68119a9c4cd3dd1b5"
+};
+function createFirebaseDb() {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const root = firebase.database().ref("store");
+  const enc = path => path.replace(/\//g, "|");
+  const clean = v => JSON.parse(JSON.stringify(v)); /* Realtime Database rejects undefined */
+  const makeDoc = path => {
+    const ref = root.child(enc(path));
+    return {
       async get() {
-        const data = read();
-        return {
-          docs: Object.keys(data)
-            .filter((k) => k.startsWith(prefix) && !k.slice(prefix.length).includes("/"))
-            .map((k) => ({ id: k.slice(prefix.length), data: () => data[k] })),
-        };
+        const snap = await ref.once("value");
+        return { exists: snap.exists(), data: () => snap.val() };
+      },
+      async set(value) {
+        await ref.set(clean(value));
+      },
+      async delete() {
+        await ref.remove();
+      }
+    };
+  };
+  const makeCollection = path => {
+    const prefix = enc(path) + "|";
+    const query = () => root.orderByKey().startAt(prefix).endAt(prefix + "\uf8ff");
+    const toSnap = snap => {
+      const docs = [];
+      snap.forEach(child => {
+        const id = child.key.slice(prefix.length);
+        if (!id.includes("|")) docs.push({ id, data: () => child.val() });
+      });
+      return { docs };
+    };
+    return {
+      doc: id => makeDoc(path + "/" + id),
+      async get() {
+        return toSnap(await query().once("value"));
       },
       onSnapshot(onNext, onError) {
-        let cancelled = false;
-        const push = async () => {
-          try {
-            const snap = await self.get();
-            if (!cancelled) onNext(snap);
-          } catch (e) {
-            if (!cancelled && onError) onError(e);
-          }
-        };
-        listeners.add(push);
-        push();
-        return () => {
-          cancelled = true;
-          listeners.delete(push);
-        };
-      },
+        const q = query();
+        const cb = snap => onNext(toSnap(snap));
+        q.on("value", cb, err => onError && onError(err));
+        return () => q.off("value", cb);
+      }
     };
-    return self;
   };
   return { collection: makeCollection };
 }
-const _localDb = createLocalDb("ojt-logbook-data");
-const getDb = () => Promise.resolve(_localDb);
+let _db = null;
+const getDb = () => {
+  if (!_db) {
+    if (!window.firebase) return Promise.reject(new Error("Firebase SDK failed to load"));
+    _db = createFirebaseDb();
+  }
+  return Promise.resolve(_db);
+};
 const recordsCol = (db, traineeId) => db.collection(`trainees/${traineeId}/records`);
 
 /* ---------- "owner" — not meaningful standalone, since each device's data is private to it ---------- */
@@ -2655,7 +2650,6 @@ function App() {
     className: "ojt-side-banner right"
   }));
 }
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
 </body>
