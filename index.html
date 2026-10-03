@@ -767,6 +767,147 @@ function AdminPinModal({
   }, mode === "create" ? "Set PIN" : "Unlock"))));
 }
 
+/* ---------- student login / register (view-only access) ---------- */
+function LoginScreen({
+  theme,
+  onLogin,
+  onRegister,
+  onAdmin,
+  children
+}) {
+  const h = React.createElement;
+  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [name, setName] = useState("");
+  const [sid, setSid] = useState("");
+  const [pw, setPw] = useState("");
+  const [pw2, setPw2] = useState("");
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const isReg = mode === "register";
+  const switchMode = m => {
+    setMode(m);
+    setErr("");
+    setPw("");
+    setPw2("");
+  };
+  const submit = async () => {
+    if (busy) return;
+    if (isReg && pw !== pw2) {
+      setErr("Passwords don't match.");
+      return;
+    }
+    setBusy(true);
+    setErr("");
+    const msg = isReg ? await onRegister(name, sid, pw) : await onLogin(sid, pw);
+    if (msg) {
+      setErr(msg);
+      setBusy(false);
+    }
+  };
+  const field = (label, value, setter, extra = {}) => h("div", {
+    className: "ojt-field",
+    style: {
+      marginTop: 10
+    }
+  }, h("label", null, label), h("input", {
+    className: "ojt-input",
+    value,
+    onChange: e => setter(e.target.value),
+    ...extra
+  }));
+  return h("div", {
+    className: "ojt-shell",
+    "data-theme": theme
+  }, h("style", null, CSS), h("div", {
+    className: "ojt-app",
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      paddingTop: 60
+    }
+  }, h("div", {
+    className: "ojt-panel",
+    style: {
+      padding: 24,
+      width: "100%",
+      maxWidth: 380
+    }
+  }, h("img", {
+    src: LOGO_SRC,
+    alt: "",
+    style: {
+      width: 56,
+      height: 56,
+      display: "block",
+      margin: "0 auto 12px"
+    }
+  }), h("h2", {
+    className: "disp",
+    style: {
+      textAlign: "center",
+      margin: "0 0 4px"
+    }
+  }, isReg ? "Create your account" : "OJT Logbook"), h("p", {
+    style: {
+      textAlign: "center",
+      color: "var(--ojt-muted)",
+      fontSize: 13.5,
+      margin: "0 0 8px"
+    }
+  }, isReg ? "Register with your Student ID to see your hours and your classmates' hours." : "Sign in to view your hours and your classmates' hours."), isReg && field("Full name", name, setName, {
+    autoFocus: true,
+    autoComplete: "name",
+    placeholder: "Juan Dela Cruz"
+  }), field("Student ID", sid, setSid, {
+    autoFocus: !isReg,
+    autoComplete: "username"
+  }), field(isReg ? "Create password" : "Password", pw, setPw, {
+    type: "password",
+    autoComplete: isReg ? "new-password" : "current-password",
+    placeholder: isReg ? "At least 6 characters" : "",
+    onKeyDown: e => e.key === "Enter" && !isReg && submit()
+  }), isReg && field("Confirm password", pw2, setPw2, {
+    type: "password",
+    autoComplete: "new-password",
+    onKeyDown: e => e.key === "Enter" && submit()
+  }), err && h("p", {
+    style: {
+      color: "var(--ojt-danger)",
+      fontSize: 12.5,
+      marginTop: 10
+    }
+  }, err), h("button", {
+    className: "ojt-btn ojt-btn-primary",
+    style: {
+      width: "100%",
+      marginTop: 16
+    },
+    onClick: submit,
+    disabled: busy
+  }, busy ? "Please wait…" : isReg ? "Create account" : "Sign in"), h("p", {
+    style: {
+      textAlign: "center",
+      fontSize: 13,
+      color: "var(--ojt-muted)",
+      margin: "14px 0 0"
+    }
+  }, isReg ? "Already registered? " : "No account yet? ", h("button", {
+    className: "ojt-btn ojt-btn-ghost",
+    style: {
+      padding: 0,
+      display: "inline"
+    },
+    onClick: () => switchMode(isReg ? "login" : "register")
+  }, isReg ? "Sign in" : "Register")), h("button", {
+    className: "ojt-btn ojt-btn-ghost",
+    style: {
+      width: "100%",
+      marginTop: 8
+    },
+    onClick: onAdmin
+  }, "Admin login"))), children);
+}
+
 /* ---------- homepage ---------- */
 function HomePage({
   onNavigate,
@@ -932,9 +1073,10 @@ function TraineeForm({
   const [name, setName] = useState(initial?.name || "");
   const [studentId, setStudentId] = useState(initial?.studentId || "");
   const [department, setDepartment] = useState(initial?.department || "");
-  const [requiredHours, setRequiredHours] = useState(initial?.requiredHours ?? 486);
+  const [requiredHours, setRequiredHours] = useState(initial?.requiredHours ?? 1800);
   const [dailyTarget, setDailyTarget] = useState(initial?.dailyTarget ?? 8);
   const [photo, setPhoto] = useState(initial?.photo || null);
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [photoBusy, setPhotoBusy] = useState(false);
   const fileInputRef = useRef(null);
@@ -961,6 +1103,18 @@ function TraineeForm({
       setError("Your student/trainee ID is required.");
       return;
     }
+    if (!initial && password.length < 6) {
+      setError("Set a login password (at least 6 characters) so this student can sign in.");
+      return;
+    }
+    if (password && password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    if (initial && !password && studentId.trim().toLowerCase() !== (initial.studentId || "").trim().toLowerCase()) {
+      setError("The student ID changed — please set a new password too.");
+      return;
+    }
     onSave({
       id: initial?.id || uid(),
       name: name.trim(),
@@ -970,7 +1124,7 @@ function TraineeForm({
       dailyTarget: Number(dailyTarget) || 8,
       photo: photo || null,
       createdAt: initial?.createdAt || nowISO()
-    });
+    }, password);
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "ojt-panel",
@@ -1069,6 +1223,15 @@ function TraineeForm({
     min: "0",
     value: dailyTarget,
     onChange: e => setDailyTarget(e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "ojt-field"
+  }, /*#__PURE__*/React.createElement("label", null, "Student login password"), /*#__PURE__*/React.createElement("input", {
+    className: "ojt-input",
+    type: "password",
+    autoComplete: "new-password",
+    value: password,
+    onChange: e => setPassword(e.target.value),
+    placeholder: initial ? "Leave blank to keep current" : "At least 6 characters"
   }))), error && /*#__PURE__*/React.createElement("p", {
     style: {
       color: "var(--ojt-danger)",
@@ -1820,6 +1983,14 @@ function App() {
   const [isOwner, setIsOwner] = useState(false);
   /* Fixed admin PIN (stored only as a hash — no create/forgot-PIN flow) */
   const ADMIN_PIN_HASHES = ["29c072cea1df1a3b7d9482ea2684543af9e7c4f4d3f32bcec22be61526504d35", "fallback--1923744208"];
+  /* Student session: signed-in students get view-only access to the attendance records */
+  const [viewer, setViewer] = useState(() => {
+    try {
+      return JSON.parse(window.sessionStorage.getItem("ojt-viewer") || "null");
+    } catch {
+      return null;
+    }
+  });
   const [adminModal, setAdminModal] = useState(null); // null | "create" | "unlock"
   const [adminError, setAdminError] = useState("");
 
@@ -1845,6 +2016,98 @@ function App() {
     } else {
       setAdminError("Incorrect PIN.");
     }
+  };
+
+  const hashStudentPw = (studentId, pw) => hashPin(studentId.trim().toLowerCase() + ":" + pw);
+  const saveCreds = async (traineeId, studentId, pw) => {
+    const db = await getDb();
+    const passHash = await hashStudentPw(studentId, pw);
+    await db.collection("creds").doc(traineeId).set({
+      passHash,
+      updatedAt: nowISO()
+    });
+  };
+  const startViewerSession = t => {
+    const v = {
+      id: t.id,
+      name: t.name
+    };
+    try {
+      window.sessionStorage.setItem("ojt-viewer", JSON.stringify(v));
+    } catch {
+      /* session storage unavailable — login still works until reload */
+    }
+    setViewer(v);
+    setSelectedId(t.id);
+    setActiveTab("attendance");
+  };
+  const studentRegister = async (nameIn, idIn, pw) => {
+    const sidRaw = (idIn || "").trim();
+    const sid = sidRaw.toLowerCase();
+    if (!sid) return "Enter your Student ID.";
+    if (pw.length < 6) return "Password must be at least 6 characters.";
+    try {
+      const db = await getDb();
+      const snap = await db.collection("trainees").get();
+      const existing = snap.docs.map(d => d.data()).find(t => (t.studentId || "").trim().toLowerCase() === sid);
+      let t;
+      if (existing) {
+        /* An admin already added this student but no password is set yet — let them claim it. */
+        const c = await db.collection("creds").doc(existing.id).get();
+        if (c.exists) return "That Student ID is already registered. Please sign in instead.";
+        t = existing;
+      } else {
+        if (!(nameIn || "").trim()) return "Enter your full name.";
+        t = {
+          id: uid(),
+          name: nameIn.trim(),
+          studentId: sidRaw,
+          department: "",
+          requiredHours: 1800,
+          dailyTarget: 8,
+          photo: null,
+          createdAt: nowISO(),
+          updatedAt: nowISO()
+        };
+        await db.collection("trainees").doc(t.id).set(t);
+        setTrainees(prev => [...(prev || []), t]);
+      }
+      await saveCreds(t.id, t.studentId, pw);
+      startViewerSession(t);
+      return "";
+    } catch {
+      return "Couldn't create the account. Check your connection and try again.";
+    }
+  };
+  const studentLogin = async (idIn, pw) => {
+    const sid = (idIn || "").trim().toLowerCase();
+    if (!sid || !pw) return "Enter your Student ID and password.";
+    try {
+      const db = await getDb();
+      const snap = await db.collection("trainees").get();
+      const matches = snap.docs.map(d => d.data()).filter(t => (t.studentId || "").trim().toLowerCase() === sid);
+      const hash = await hashStudentPw(sid, pw);
+      for (const t of matches) {
+        const c = await db.collection("creds").doc(t.id).get();
+        if (c.exists && c.data().passHash === hash) {
+          startViewerSession(t);
+          return "";
+        }
+      }
+      return "Incorrect Student ID or password.";
+    } catch {
+      return "Couldn't reach the database. Check your connection and try again.";
+    }
+  };
+  const logout = () => {
+    try {
+      window.sessionStorage.removeItem("ojt-viewer");
+    } catch {
+      /* ignore */
+    }
+    setViewer(null);
+    setIsOwner(false);
+    setActiveTab("home");
   };
 
   /* lightweight counts for the homepage cards */
@@ -1933,6 +2196,12 @@ function App() {
     })();
   }, []);
 
+  useEffect(() => {
+    if (!viewer || !trainees) return;
+    if (trainees.some(t => t.id === viewer.id)) setSelectedId(viewer.id);else logout();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trainees]);
+
   /* load records when trainee selected */
   useEffect(() => {
     if (!selectedId || recordsById[selectedId]) return;
@@ -1978,7 +2247,7 @@ function App() {
     return () => clearInterval(iv);
   }, [openRecord]);
   const renderedHours = useMemo(() => records.reduce((sum, r) => r.timeIn && r.timeOut ? sum + hoursBetween(r.timeIn, r.timeOut) : sum, 0), [records]);
-  const addTrainee = async tIn => {
+  const addTrainee = async (tIn, pw) => {
     const t = {
       ...tIn,
       updatedAt: nowISO()
@@ -1990,11 +2259,12 @@ function App() {
     try {
       const db = await getDb();
       if (db) await db.collection("trainees").doc(t.id).set(t);
+      if (db && pw) await saveCreds(t.id, t.studentId, pw);
     } catch {
       setStorageError("Couldn't save changes. Your changes may not persist.");
     }
   };
-  const editTrainee = async tIn => {
+  const editTrainee = async (tIn, pw) => {
     const t = {
       ...tIn,
       updatedAt: nowISO()
@@ -2005,6 +2275,7 @@ function App() {
     try {
       const db = await getDb();
       if (db) await db.collection("trainees").doc(t.id).set(t);
+      if (db && pw) await saveCreds(t.id, t.studentId, pw);
     } catch {
       setStorageError("Couldn't save changes. Your changes may not persist.");
     }
@@ -2025,6 +2296,7 @@ function App() {
       const db = await getDb();
       if (db) {
         await db.collection("trainees").doc(id).delete();
+        await db.collection("creds").doc(id).delete();
         const snap = await recordsCol(db, id).get();
         await Promise.all(snap.docs.map(d => recordsCol(db, id).doc(d.id).delete()));
       }
@@ -2171,6 +2443,19 @@ function App() {
       className: "ojt-side-banner right"
     }));
   }
+  if (!isOwner && !viewer) {
+    return /*#__PURE__*/React.createElement(LoginScreen, {
+      theme: theme,
+      onLogin: studentLogin,
+      onRegister: studentRegister,
+      onAdmin: openAdminGate
+    }, adminModal && /*#__PURE__*/React.createElement(AdminPinModal, {
+      mode: adminModal,
+      error: adminError,
+      onSubmit: handleAdminSubmit,
+      onCancel: () => setAdminModal(null)
+    }));
+  }
   const navLabel = {
     home: "Home",
     attendance: "Attendance",
@@ -2241,7 +2526,10 @@ function App() {
     onClick: toggleTheme,
     "aria-label": theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
     title: theme === "dark" ? "Light mode" : "Dark mode"
-  }, theme === "dark" ? "☀" : "☾"), activeTab === "attendance" && /*#__PURE__*/React.createElement("button", {
+  }, theme === "dark" ? "☀" : "☾"), /*#__PURE__*/React.createElement("button", {
+    className: "ojt-btn ojt-btn-outline",
+    onClick: logout
+  }, "Log out"), activeTab === "attendance" && isOwner && /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-primary",
     onClick: () => setShowAddTrainee(s => !s)
   }, showAddTrainee ? "Close" : "+ Add trainee"))), /*#__PURE__*/React.createElement("div", {
@@ -2413,7 +2701,8 @@ function App() {
   }), /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-ghost",
     style: {
-      padding: "4px 0"
+      padding: "4px 0",
+      display: isOwner ? undefined : "none"
     },
     onClick: () => quickPhotoInputRef.current?.click(),
     disabled: quickPhotoBusy
@@ -2534,7 +2823,7 @@ function App() {
     }
   }, "Not clocked in right now")), /*#__PURE__*/React.createElement("div", {
     style: {
-      display: "flex",
+      display: isOwner ? "flex" : "none",
       gap: 10
     }
   }, openRecord ? /*#__PURE__*/React.createElement("button", {
@@ -2583,7 +2872,7 @@ function App() {
       color: "var(--ojt-muted)",
       margin: "0 0 10px"
     }
-  }, "Entries can be clocked in and out here, but only the logbook owner can edit or delete a saved entry."), /*#__PURE__*/React.createElement("div", {
+  }, "View only — hours can only be recorded or changed by the logbook admin."), /*#__PURE__*/React.createElement("div", {
     className: "ojt-panel",
     style: {
       overflowX: "auto",
