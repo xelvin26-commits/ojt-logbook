@@ -729,12 +729,13 @@ function AdminPinModal({
   }, /*#__PURE__*/React.createElement("h3", {
     id: "ojt-admin-title",
     className: "disp"
-  }, mode === "create" ? "Set an admin PIN" : "Enter admin PIN"), /*#__PURE__*/React.createElement("p", null, mode === "create" ? "This unlocks editing and removing trainees and their logged hours on this device. Anyone without it can still add themselves and log their own hours." : "Enter your admin PIN to edit or remove trainees and their logged hours."), /*#__PURE__*/React.createElement("div", {
+  }, "Enter admin PIN"), /*#__PURE__*/React.createElement("p", null, mode === "create" ? "This unlocks editing and removing trainees and their logged hours on this device. Anyone without it can still add themselves and log their own hours." : "Enter your admin PIN to edit or remove trainees and their logged hours."), /*#__PURE__*/React.createElement("div", {
     className: "ojt-field"
   }, /*#__PURE__*/React.createElement("label", null, "PIN"), /*#__PURE__*/React.createElement("input", {
     className: "ojt-input",
     type: "password",
-    inputMode: "numeric",
+    inputMode: "text",
+    autoComplete: "off",
     value: pin,
     onChange: e => setPin(e.target.value),
     autoFocus: true,
@@ -1822,13 +1823,8 @@ function App() {
   /* Admin lock: a PIN set on this device unlocks editing/removing trainees and their
      logged hours. Anyone without it can still add themselves and log their own hours. */
   const [isOwner, setIsOwner] = useState(false);
-  const [adminHash, setAdminHash] = useState(() => {
-    try {
-      return window.localStorage.getItem("ojt-admin-hash");
-    } catch {
-      return null;
-    }
-  });
+  /* Fixed admin PIN (stored only as a hash — no create/forgot-PIN flow) */
+  const ADMIN_PIN_HASHES = ["29c072cea1df1a3b7d9482ea2684543af9e7c4f4d3f32bcec22be61526504d35", "fallback--1923744208"];
   const [adminModal, setAdminModal] = useState(null); // null | "create" | "unlock"
   const [adminError, setAdminError] = useState("");
 
@@ -1838,7 +1834,7 @@ function App() {
       return;
     }
     setAdminError("");
-    setAdminModal(adminHash ? "unlock" : "create");
+    setAdminModal("unlock");
   };
 
   const handleAdminSubmit = async (pin, err) => {
@@ -1847,17 +1843,7 @@ function App() {
       return;
     }
     const hash = await hashPin(pin);
-    if (adminModal === "create") {
-      try {
-        window.localStorage.setItem("ojt-admin-hash", hash);
-      } catch {
-        /* storage unavailable — PIN won't persist across reloads, but still unlocks now */
-      }
-      setAdminHash(hash);
-      setIsOwner(true);
-      setAdminModal(null);
-      setAdminError("");
-    } else if (hash === adminHash) {
+    if (ADMIN_PIN_HASHES.includes(hash)) {
       setIsOwner(true);
       setAdminModal(null);
       setAdminError("");
