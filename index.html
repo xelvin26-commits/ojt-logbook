@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>OJT Logbook</title>
 <meta name="description" content="OJT Logbook — track on-the-job training attendance and hours." />
 <meta name="theme-color" content="#F5B301" />
@@ -11,7 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
-  html, body { margin: 0; padding: 0; background: #F5F0DC; }
+  html, body { margin: 0; padding: 0; background: #E6DBC0; }
   #root { min-height: 100vh; }
 </style>
 </head>
@@ -200,7 +200,7 @@ const resizeImage = (file, maxDim = 640) => new Promise((resolve, reject) => {
 
 /* ---------- CSS ---------- */
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap');
 
 .ojt-shell, .ojt-shell * { box-sizing: border-box; }
 .ojt-shell {
@@ -209,7 +209,7 @@ const CSS = `
   --ojt-danger: #C0392B; --ojt-table-hover: #FFFBEA; --ojt-track: #F2EEDD; --ojt-amber: #8A5A00;
   --ojt-closed-bg: #EFEDE4; --ojt-outline-border: #D8D2B5; --ojt-overlay: rgba(20,18,10,0.45);
   --ojt-side-bg: #F5F0DC; --ojt-side-line: rgba(30,28,20,0.05);
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
   background: var(--ojt-side-bg);
   min-height: 100vh;
   width: 100%;
@@ -555,6 +555,209 @@ img.ojt-avatar, img.ojt-avatar-sm { cursor: zoom-in; }
   display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
 }
 
+
+.ojt-duration-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; color: var(--ojt-muted); }
+.ojt-chip { font-family: inherit; font-size: 12.5px; padding: 5px 11px; border-radius: 20px; border: 1px solid var(--ojt-outline-border); background: transparent; color: var(--ojt-fg); cursor: pointer; }
+.ojt-chip:hover { background: var(--ojt-hover); border-color: var(--ojt-accent); }
+.ojt-chip.active { background: var(--ojt-accent); border-color: var(--ojt-accent); font-weight: 600; }
+.ojt-expiry-badge { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px; background: var(--ojt-hover); color: var(--ojt-amber); margin-top: 8px; }
+.ojt-expiry-badge.soon { background: rgba(192,57,43,0.12); color: var(--ojt-danger); }
+
+/* ---------- responsive polish: phones, tablets, desktop ---------- */
+html { -webkit-text-size-adjust: 100%; }
+.ojt-app img { max-width: 100%; }
+.ojt-modal { max-height: 90vh; overflow-y: auto; }
+.ojt-scroll-top-btn { bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 900px) {
+  .ojt-main { padding: 22px 20px 56px; }
+  .ojt-header, .ojt-nav { padding-left: 20px; padding-right: 20px; }
+  .ojt-app [style*="repeat(4, 1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 760px) {
+  /* inputs at 16px stop iOS from zooming the page on focus; bigger touch targets */
+  .ojt-input, .ojt-select, input, select, textarea { font-size: 16px !important; }
+  .ojt-btn { min-height: 42px; }
+  .ojt-icon-btn { width: 40px; height: 40px; }
+  .ojt-nav-btn, .ojt-mobile-menu-btn { min-height: 44px; }
+  .ojt-roster-item { min-height: 56px; }
+  .ojt-header { position: static; }
+  .ojt-header h1 { font-size: 23px; }
+  .ojt-header-actions { width: 100%; }
+  .ojt-search-wrap { max-width: none; min-width: 0; }
+  /* two-column forms become one column */
+  .ojt-app [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+  /* tables scroll sideways instead of breaking the page */
+  .ojt-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+  .ojt-table td, .ojt-table th { padding: 10px 8px; }
+  /* login / register card */
+  .ojt-app[style*="padding-top"] { padding-top: 20px !important; padding-left: 12px; padding-right: 12px; }
+  .ojt-reg-photo-frame { width: min(260px, 80vw); height: min(260px, 80vw); }
+  .ojt-modal-overlay { align-items: flex-end; padding: 0; }
+  .ojt-modal { max-width: none; border-radius: 14px 14px 0 0; padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+  .ojt-lightbox img { max-width: 96vw; }
+}
+@media (max-width: 380px) {
+  .ojt-app [style*="repeat(4, 1fr)"] { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .ojt-main { padding: 16px 12px 48px; }
+}
+@media (hover: none) {
+  .ojt-roster-item:hover, .ojt-btn:active { transform: none; }
+}
+
+
+/* =====================================================================
+   THEME: "School ledger" — CTU maroon + brass, paper, ink, ruled lines
+   ===================================================================== */
+.ojt-shell {
+  --ojt-bg: #FBF7EA; --ojt-fg: #25191A; --ojt-muted: #6F6058; --ojt-border: #DACDAE;
+  --ojt-panel: #FFFDF6; --ojt-hover: #F5E8C6; --ojt-accent: #C9962B; --ojt-accent-dark: #A87A16;
+  --ojt-danger: #B3261E; --ojt-table-hover: #FAF1D6; --ojt-track: #EDE3C8; --ojt-amber: #7A1F2B;
+  --ojt-closed-bg: #ECE5D2; --ojt-outline-border: #BFAF86; --ojt-overlay: rgba(30,12,14,0.55);
+  --ojt-side-bg: #E6DBC0; --ojt-side-line: rgba(90,50,30,0.09);
+  --ojt-maroon: #7A1F2B; --ojt-maroon-dark: #5C1520; --ojt-cream: #FBF1D8;
+}
+.ojt-shell[data-theme="dark"] {
+  --ojt-bg: #1C1314; --ojt-fg: #F1E7D2; --ojt-muted: #B3A592; --ojt-border: #4A3537;
+  --ojt-panel: #261B1C; --ojt-hover: #3B2A24; --ojt-accent: #D9A93B; --ojt-accent-dark: #E8BD57;
+  --ojt-danger: #F0776C; --ojt-table-hover: #2F2220; --ojt-track: #33262A; --ojt-amber: #E9BF6A;
+  --ojt-closed-bg: #33262A; --ojt-outline-border: #6A5253; --ojt-overlay: rgba(0,0,0,0.7);
+  --ojt-side-bg: #130C0D; --ojt-side-line: rgba(255,230,200,0.04);
+  --ojt-maroon: #8F2635; --ojt-maroon-dark: #6E1B27; --ojt-cream: #FBF1D8;
+}
+.ojt-app .disp, .ojt-header h1 { font-family: 'Zilla Slab', Georgia, serif; letter-spacing: 0; }
+.ojt-app .mono, .ojt-table td.mono, .ojt-status-pill, .ojt-expiry-badge { font-family: 'Courier Prime', 'Courier New', monospace; }
+.ojt-app { box-shadow: 0 0 0 1px var(--ojt-border), 0 0 40px rgba(60,30,20,0.12); }
+
+/* header: maroon band, brass rule, seal on a cream disc */
+.ojt-header {
+  background: var(--ojt-maroon); color: var(--ojt-cream); align-items: center;
+  border-bottom: 4px solid var(--ojt-accent); padding: 18px 32px;
+}
+.ojt-header h1 { font-size: 27px; font-weight: 700; color: var(--ojt-cream); }
+.ojt-header h1::after { display: none; }
+.ojt-header p { color: rgba(251,241,216,0.78); margin-top: 3px; }
+.ojt-header-brand:hover h1 { color: #fff; }
+.ojt-header-brand img { background: #fff; border-radius: 50%; padding: 2px; box-shadow: 0 0 0 2px var(--ojt-accent); width: 52px !important; height: 52px !important; }
+.ojt-header .ojt-icon-btn, .ojt-header .ojt-btn-outline { border-color: rgba(251,241,216,0.5); color: var(--ojt-cream); background: transparent; }
+.ojt-header .ojt-icon-btn:hover, .ojt-header .ojt-btn-outline:hover { background: rgba(251,241,216,0.14); border-color: var(--ojt-cream); }
+.ojt-header .ojt-btn-primary { background: var(--ojt-accent); color: #2A1A12; }
+.ojt-header .ojt-btn-primary:hover { background: #E0B04A; box-shadow: none; }
+
+/* tabs like ledger index tabs */
+.ojt-nav { background: var(--ojt-side-bg); padding: 10px 32px 0; gap: 6px; border-bottom: 1px solid var(--ojt-outline-border); }
+.ojt-nav-btn {
+  background: rgba(0,0,0,0.04); border: 1px solid var(--ojt-border); border-bottom: none; border-radius: 3px 3px 0 0;
+  padding: 9px 16px 8px; margin-bottom: -1px; letter-spacing: 0.02em; font-weight: 600;
+}
+.ojt-nav-btn.active { background: var(--ojt-bg); color: var(--ojt-maroon); border-color: var(--ojt-outline-border); border-top: 3px solid var(--ojt-maroon); }
+[data-theme="dark"] .ojt-nav-btn.active { color: var(--ojt-accent-dark); border-top-color: var(--ojt-accent); }
+
+/* paper with faint ruled lines */
+.ojt-main { background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--ojt-side-line) 31px, var(--ojt-side-line) 32px); }
+.ojt-sidebar { background: rgba(0,0,0,0.025); border-right: 1px solid var(--ojt-outline-border); }
+.ojt-sidebar-head { font-family: 'Courier Prime', monospace; font-weight: 700; letter-spacing: 0.12em; border-bottom: 2px solid var(--ojt-maroon); }
+[data-theme="dark"] .ojt-sidebar-head { border-bottom-color: var(--ojt-accent); }
+.ojt-roster-item { border-radius: 2px; border-left-width: 4px; }
+.ojt-roster-item:hover { transform: none; }
+.ojt-roster-item.active { border-left-color: var(--ojt-maroon); }
+.ojt-roster-bar-track { border-radius: 0; height: 4px; }
+.ojt-roster-bar-fill { background: var(--ojt-maroon); }
+
+/* panels: document cards with a double rule on top */
+.ojt-panel { border-radius: 2px; border: 1px solid var(--ojt-outline-border); border-top: 4px double var(--ojt-maroon); box-shadow: 0 1px 0 rgba(60,30,20,0.08); }
+[data-theme="dark"] .ojt-panel { border-top-color: var(--ojt-accent); }
+
+/* buttons */
+.ojt-btn { border-radius: 2px; font-weight: 700; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; padding: 10px 16px; }
+.ojt-btn-primary { background: var(--ojt-maroon); color: var(--ojt-cream); border-color: var(--ojt-maroon-dark); }
+.ojt-btn-primary:hover { background: var(--ojt-maroon-dark); box-shadow: none; }
+.ojt-btn-outline { border-width: 1.5px; border-color: var(--ojt-fg); }
+.ojt-btn-outline:hover { background: var(--ojt-fg); color: var(--ojt-bg); border-color: var(--ojt-fg); }
+.ojt-btn-ghost { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.ojt-btn:focus-visible, .ojt-input:focus-visible, .ojt-nav-btn:focus-visible { outline: 2px solid var(--ojt-maroon); outline-offset: 2px; }
+[data-theme="dark"] .ojt-btn:focus-visible { outline-color: var(--ojt-accent); }
+.ojt-btn:active { transform: translateY(1px); }
+.ojt-icon-btn { border-radius: 2px; }
+
+/* form fields: underlined like a paper form */
+.ojt-input, .ojt-select { border-radius: 0; border: none; border-bottom: 2px solid var(--ojt-outline-border); background: rgba(0,0,0,0.035); padding: 9px 10px; }
+.ojt-input:focus, .ojt-select:focus { border-bottom-color: var(--ojt-maroon); box-shadow: none; background: var(--ojt-panel); }
+[data-theme="dark"] .ojt-input:focus, [data-theme="dark"] .ojt-select:focus { border-bottom-color: var(--ojt-accent); }
+.ojt-header .ojt-input { background: var(--ojt-panel); border-bottom-color: var(--ojt-accent); }
+.ojt-field label { font-family: 'Courier Prime', monospace; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ojt-muted); }
+
+/* progress: a ruler */
+.ojt-progress-track { height: 14px; border-radius: 0; border: 1px solid var(--ojt-outline-border);
+  background: repeating-linear-gradient(to right, var(--ojt-track) 0, var(--ojt-track) 9px, var(--ojt-border) 9px, var(--ojt-border) 10px); }
+.ojt-progress-fill { background: var(--ojt-maroon); }
+.ojt-progress-fill.complete { background: var(--ojt-accent-dark); }
+[data-theme="dark"] .ojt-progress-fill { background: var(--ojt-accent); }
+
+/* tables: ledger */
+.ojt-table th { font-family: 'Courier Prime', monospace; font-weight: 700; letter-spacing: 0.1em; color: var(--ojt-maroon); border-bottom: 2px solid var(--ojt-maroon); }
+[data-theme="dark"] .ojt-table th { color: var(--ojt-accent); border-bottom-color: var(--ojt-accent); }
+.ojt-table td { border-bottom: 1px dashed var(--ojt-outline-border); }
+
+/* status "stamps" */
+.ojt-status-pill, .ojt-expiry-badge { border-radius: 2px; border: 1.5px solid currentColor; background: transparent; text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; font-weight: 700; }
+.ojt-status-pill.open { color: #2F6B3A; background: transparent; transform: rotate(-1.5deg); }
+[data-theme="dark"] .ojt-status-pill.open { color: #7FCB8D; }
+.ojt-status-pill.closed { color: var(--ojt-muted); background: transparent; }
+.ojt-expiry-badge { background: transparent; color: var(--ojt-maroon); }
+[data-theme="dark"] .ojt-expiry-badge { color: var(--ojt-accent-dark); }
+.ojt-expiry-badge.soon { background: transparent; color: var(--ojt-danger); }
+.ojt-chip { border-radius: 2px; font-weight: 600; }
+.ojt-chip.active { background: var(--ojt-maroon); border-color: var(--ojt-maroon); color: var(--ojt-cream); }
+
+/* photos: ID-card style */
+.ojt-avatar, .ojt-avatar-sm { border-radius: 3px; border: 2px solid var(--ojt-fg); background: var(--ojt-hover); color: var(--ojt-maroon); }
+.ojt-roster-item.active .ojt-avatar-sm { background: var(--ojt-maroon); color: var(--ojt-cream); border-color: var(--ojt-fg); }
+.ojt-reg-photo-frame { border-radius: 2px; border: 2px dashed var(--ojt-maroon); }
+.ojt-reg-photo-frame.filled { border: 3px solid var(--ojt-fg); box-shadow: 4px 4px 0 var(--ojt-accent); }
+.ojt-lightbox img { border-radius: 2px; border: 6px solid #fff; }
+
+/* home cards: index cards */
+.ojt-home-card { border-radius: 2px; border-left: 6px solid var(--ojt-maroon); }
+.ojt-home-card:hover { background: var(--ojt-hover); }
+.ojt-indeed-banner { border-radius: 2px; border: 1px dashed var(--ojt-maroon); }
+.ojt-modal { border-radius: 2px; border-top: 5px solid var(--ojt-maroon); }
+.ojt-city-tag { border-radius: 2px; }
+.ojt-toast { border-radius: 2px; }
+.ojt-scroll-top-btn { border-radius: 2px; background: var(--ojt-maroon); color: var(--ojt-cream); }
+.ojt-scroll-progress { background: var(--ojt-accent); }
+.ojt-side-banner::after { background: var(--ojt-maroon); height: 6px; }
+.ojt-side-banner::before { opacity: 0.09; }
+.ojt-pulse-dot { background: var(--ojt-maroon); }
+
+@media (max-width: 760px) {
+  .ojt-header { padding: 14px 16px; }
+  .ojt-header-brand img { width: 44px !important; height: 44px !important; }
+  .ojt-nav { padding: 8px 12px 0; }
+  .ojt-btn { font-size: 12px; }
+}
+
+
+/* journal + ratings */
+.ojt-post, .ojt-composer { padding: 16px 18px; margin-bottom: 12px; }
+.ojt-post-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.ojt-post-meta { font-size: 11.5px; color: var(--ojt-muted); margin-top: 2px; }
+.ojt-post-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; font-size: 15px; margin: 0; }
+.ojt-composer textarea, .ojt-post textarea { width: 100%; resize: vertical; line-height: 1.5; }
+.ojt-composer-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; }
+.ojt-composer-bar .mono { font-size: 11.5px; color: var(--ojt-muted); }
+.ojt-stars { display: inline-flex; gap: 1px; font-size: 16px; line-height: 1; vertical-align: middle; }
+.ojt-stars span, .ojt-star-btn { color: var(--ojt-outline-border); }
+.ojt-stars span.on, .ojt-star-btn.on { color: var(--ojt-accent); }
+.ojt-star-btn { background: none; border: none; padding: 0 2px; font-size: inherit; cursor: pointer; }
+.ojt-rate-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--ojt-outline-border); font-size: 14px; }
+.ojt-rate-breakdown { margin: 4px 0 10px; }
+.ojt-rating-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.ojt-rating-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; font-family: inherit; color: var(--ojt-fg); }
+.ojt-rating-card:hover, .ojt-rating-card.active { background: var(--ojt-hover); }
+.ojt-rating-card.active { border-color: var(--ojt-maroon); }
+@media (max-width: 760px) { .ojt-post, .ojt-composer { padding: 14px; } .ojt-rate-row { font-size: 13.5px; } }
+
+.ojt-reg-photo-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 @media print {
   .ojt-header, .ojt-nav, .ojt-sidebar, .ojt-scroll-top-btn, .ojt-scroll-progress,
   .ojt-btn, .ojt-row-actions, .ojt-photo-picker, .ojt-icon-btn, .ojt-skip-link, .ojt-side-banner { display: none !important; }
@@ -820,6 +1023,7 @@ function LoginScreen({
   const [photo, setPhoto] = useState(null);
   const [photoBusy, setPhotoBusy] = useState(false);
   const photoInputRef = useRef(null);
+  const selfieInputRef = useRef(null);
   const handlePhoto = async e => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -946,17 +1150,32 @@ function LoginScreen({
     ref: photoInputRef,
     type: "file",
     accept: "image/*",
+    onChange: handlePhoto,
+    style: {
+      display: "none"
+    }
+  }), h("input", {
+    ref: selfieInputRef,
+    type: "file",
+    accept: "image/*",
     capture: "user",
     onChange: handlePhoto,
     style: {
       display: "none"
     }
-  }), h("button", {
+  }), h("div", {
+    className: "ojt-reg-photo-btns"
+  }, h("button", {
     type: "button",
     className: "ojt-btn ojt-btn-outline",
     onClick: () => photoInputRef.current?.click(),
     disabled: photoBusy
-  }, photoBusy ? "Loading…" : photo ? "Change photo" : "Upload / take photo"), h("p", {
+  }, photoBusy ? "Loading…" : photo ? "Change file" : "Upload file"), h("button", {
+    type: "button",
+    className: "ojt-btn ojt-btn-outline",
+    onClick: () => selfieInputRef.current?.click(),
+    disabled: photoBusy
+  }, "Take selfie (optional)")), h("p", {
     className: "ojt-reg-hint"
   }, "Face the camera, good lighting, no sunglasses or mask.")), field(isReg ? "Create password" : "Password", pw, setPw, {
     type: "password",
@@ -1350,6 +1569,88 @@ function TraineeForm({
   }, "Cancel")));
 }
 
+/* ---------- deadlines: auto-remove expired locations / postings ---------- */
+/* An item stays visible through its deadline date and is deleted from the database the next day. */
+const isExpired = item => !!(item && item.deadline && todayStr() > item.deadline);
+const addDaysStr = n => {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+const daysLeft = deadline => Math.round((new Date(deadline + "T00:00:00") - new Date(todayStr() + "T00:00:00")) / 86400000);
+function purgeExpired(db, col, list) {
+  const live = [];
+  list.forEach(x => {
+    if (isExpired(x)) {
+      try {
+        db.collection(col).doc(x.id).delete().catch(() => {});
+      } catch {}
+    } else live.push(x);
+  });
+  return live;
+}
+function useExpirySweep(col, list, setList) {
+  const ref = useRef(list);
+  ref.current = list;
+  useEffect(() => {
+    const id = setInterval(async () => {
+      const cur = ref.current;
+      if (!cur || !cur.some(isExpired)) return;
+      try {
+        const db = await getDb();
+        setList(purgeExpired(db, col, cur));
+      } catch {}
+    }, 60000);
+    return () => clearInterval(id);
+  }, [col]);
+}
+function ExpiryBadge({
+  deadline
+}) {
+  if (!deadline) return null;
+  const n = daysLeft(deadline);
+  const text = n <= 0 ? "Last day today — removed tomorrow" : n === 1 ? "Auto-removes after tomorrow" : `Auto-removes in ${n} days`;
+  return React.createElement("span", {
+    className: "ojt-expiry-badge" + (n <= 2 ? " soon" : "")
+  }, "⏳ ", text);
+}
+function DeadlineField({
+  value,
+  onChange,
+  label
+}) {
+  const h = React.createElement;
+  return h("div", {
+    className: "ojt-field",
+    style: {
+      gridColumn: "1 / -1"
+    }
+  }, h("label", null, label), h("input", {
+    className: "ojt-input",
+    type: "date",
+    min: todayStr(),
+    value,
+    onChange: e => onChange(e.target.value)
+  }), h("div", {
+    className: "ojt-duration-chips"
+  }, h("span", null, "Duration:"), [7, 14, 30, 60].map(n => h("button", {
+    key: n,
+    type: "button",
+    className: "ojt-chip" + (value === addDaysStr(n) ? " active" : ""),
+    onClick: () => onChange(addDaysStr(n))
+  }, n, " days")), value && h("button", {
+    type: "button",
+    className: "ojt-chip",
+    onClick: () => onChange("")
+  }, "No deadline")), h("p", {
+    className: "ojt-reg-hint",
+    style: {
+      textAlign: "left",
+      marginTop: 6
+    }
+  }, value ? `Shown until ${fmtDateLong(value)}, then deleted automatically.` : "Leave empty to keep it until you delete it yourself."));
+}
+
 /* ---------- job locations ---------- */
 function LocationForm({
   initial,
@@ -1363,6 +1664,7 @@ function LocationForm({
   const [contactPerson, setContactPerson] = useState(initial?.contactPerson || "");
   const [contactNumber, setContactNumber] = useState(initial?.contactNumber || "");
   const [notes, setNotes] = useState(initial?.notes || "");
+  const [deadline, setDeadline] = useState(initial?.deadline || "");
   const [error, setError] = useState("");
   const submit = () => {
     if (!company.trim()) {
@@ -1375,6 +1677,7 @@ function LocationForm({
       address: address.trim(),
       industry: industry.trim(),
       slotsAvailable: Number(slotsAvailable) || 0,
+      deadline,
       contactPerson: contactPerson.trim(),
       contactNumber: contactNumber.trim(),
       notes: notes.trim()
@@ -1451,7 +1754,11 @@ function LocationForm({
     className: "ojt-input",
     value: notes,
     onChange: e => setNotes(e.target.value)
-  }))), error && /*#__PURE__*/React.createElement("p", {
+  })), /*#__PURE__*/React.createElement(DeadlineField, {
+    label: "Available until (auto-deletes after this date)",
+    value: deadline,
+    onChange: setDeadline
+  })), error && /*#__PURE__*/React.createElement("p", {
     style: {
       color: "var(--ojt-danger)",
       fontSize: 12.5,
@@ -1487,12 +1794,13 @@ function JobLocationsPage() {
           return;
         }
         const snap = await db.collection("locations").get();
-        setLocations(snap.docs.map(d => d.data()));
+        setLocations(purgeExpired(db, "locations", snap.docs.map(d => d.data())));
       } catch {
         setLocations([]);
       }
     })();
   }, []);
+  useExpirySweep("locations", locations, setLocations);
   const upsert = async locIn => {
     const loc = {
       ...locIn,
@@ -1658,7 +1966,9 @@ function JobLocationsPage() {
       margin: "6px 0 0",
       color: "var(--ojt-muted)"
     }
-  }, loc.notes), loc.updatedAt && /*#__PURE__*/React.createElement("p", {
+  }, loc.notes), loc.deadline && /*#__PURE__*/React.createElement(ExpiryBadge, {
+    deadline: loc.deadline
+  }), loc.updatedAt && /*#__PURE__*/React.createElement("p", {
     className: "ojt-last-updated"
   }, "Last updated ", fmtDateLong(loc.updatedAt.slice(0, 10))), /*#__PURE__*/React.createElement("div", {
     className: "ojt-row-actions",
@@ -1771,14 +2081,11 @@ function PostingForm({
     value: allowance,
     onChange: e => setAllowance(e.target.value),
     placeholder: "₱ per day"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "ojt-field"
-  }, /*#__PURE__*/React.createElement("label", null, "Application deadline"), /*#__PURE__*/React.createElement("input", {
-    className: "ojt-input",
-    type: "date",
+  })), /*#__PURE__*/React.createElement(DeadlineField, {
+    label: "Application deadline (auto-deletes after this date)",
     value: deadline,
-    onChange: e => setDeadline(e.target.value)
-  })), /*#__PURE__*/React.createElement("div", {
+    onChange: setDeadline
+  }), /*#__PURE__*/React.createElement("div", {
     className: "ojt-field"
   }, /*#__PURE__*/React.createElement("label", null, "Status"), /*#__PURE__*/React.createElement("select", {
     className: "ojt-select",
@@ -1827,6 +2134,7 @@ function JobHiringPage() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [live, setLive] = useState(false);
+  useExpirySweep("postings", postings, setPostings);
   useEffect(() => {
     let unsubscribe = null;
     let cancelled = false;
@@ -1839,7 +2147,7 @@ function JobHiringPage() {
         }
         unsubscribe = db.collection("postings").onSnapshot(snap => {
           if (cancelled) return;
-          setPostings(snap.docs.map(d => d.data()));
+          setPostings(purgeExpired(db, "postings", snap.docs.map(d => d.data())));
           setLive(true);
         }, () => {
           if (!cancelled) setError("Live updates lost connection — postings may be out of date until you reload.");
@@ -2023,7 +2331,9 @@ function JobHiringPage() {
     className: "ojt-city-tag"
   }, "📍 ", p.city), /*#__PURE__*/React.createElement("span", {
     className: "mono"
-  }, p.slots, " slot", p.slots === 1 ? "" : "s"), p.allowance && /*#__PURE__*/React.createElement("span", null, p.allowance), p.deadline && /*#__PURE__*/React.createElement("span", null, "Apply by ", fmtDateLong(p.deadline))), p.requirements && /*#__PURE__*/React.createElement("p", {
+  }, p.slots, " slot", p.slots === 1 ? "" : "s"), p.allowance && /*#__PURE__*/React.createElement("span", null, p.allowance), p.deadline && /*#__PURE__*/React.createElement("span", null, "Apply by ", fmtDateLong(p.deadline)), p.deadline && /*#__PURE__*/React.createElement(ExpiryBadge, {
+    deadline: p.deadline
+  })), p.requirements && /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: 13,
       margin: "10px 0 0"
@@ -2048,6 +2358,555 @@ function JobHiringPage() {
     title: "Remove this posting?",
     message: "This job posting will be permanently removed. This can't be undone.",
     onConfirm: () => remove(confirmDelete),
+    onCancel: () => setConfirmDelete(null)
+  }));
+}
+
+/* ---------- journal + performance ratings ---------- */
+const fmtStamp = iso => {
+  const d = new Date(iso);
+  return fmtDateLong(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`) + " · " + fmtTime(iso);
+};
+function PersonAvatar({
+  t,
+  name,
+  large
+}) {
+  const cls = large ? "ojt-avatar" : "ojt-avatar-sm";
+  if (t && t.photo) return React.createElement("img", {
+    className: cls,
+    src: t.photo,
+    alt: (t.name || name || "") + " photo"
+  });
+  return React.createElement("div", {
+    className: cls
+  }, getInitials(t ? t.name : name));
+}
+function useLiveCollection(col, setList, setError) {
+  useEffect(() => {
+    let unsub = null,
+      dead = false;
+    (async () => {
+      try {
+        const db = await getDb();
+        unsub = db.collection(col).onSnapshot(snap => {
+          if (!dead) setList(snap.docs.map(d => d.data()));
+        }, () => {
+          if (!dead) setError("Live updates lost connection — reload to refresh.");
+        });
+      } catch {
+        setList([]);
+      }
+    })();
+    return () => {
+      dead = true;
+      if (unsub) unsub();
+    };
+  }, [col]);
+}
+async function saveDoc(col, item, setError) {
+  try {
+    const db = await getDb();
+    await db.collection(col).doc(item.id).set(item);
+    return true;
+  } catch (e) {
+    setError(dbErrorMessage(e));
+    return false;
+  }
+}
+async function removeDoc(col, id, setError) {
+  try {
+    const db = await getDb();
+    await db.collection(col).doc(id).delete();
+  } catch (e) {
+    setError(dbErrorMessage(e));
+  }
+}
+function JournalPage({
+  isOwner,
+  viewer,
+  trainees
+}) {
+  const h = React.createElement;
+  const [entries, setEntries] = useState(null);
+  const [error, setError] = useState("");
+  const [text, setText] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [filterId, setFilterId] = useState("");
+  const [query, setQuery] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [busy, setBusy] = useState(false);
+  useLiveCollection("journal", setEntries, setError);
+  const byId = useMemo(() => Object.fromEntries((trainees || []).map(t => [t.id, t])), [trainees]);
+  const canPost = !isOwner && !!viewer;
+  const q = query.trim().toLowerCase();
+  const visible = (entries || []).filter(e => isOwner ? !filterId || e.traineeId === filterId : viewer && e.traineeId === viewer.id).filter(e => !q || (e.text || "").toLowerCase().includes(q)).sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+  const post = async () => {
+    const t = text.trim();
+    if (!t || !canPost) return;
+    setBusy(true);
+    const ok = await saveDoc("journal", {
+      id: uid(),
+      traineeId: viewer.id,
+      authorName: viewer.name,
+      text: t.slice(0, 3000),
+      createdAt: nowISO(),
+      updatedAt: null
+    }, setError);
+    if (ok) setText("");
+    setBusy(false);
+  };
+  const saveEdit = async e => {
+    const t = editText.trim();
+    if (!t) return;
+    const ok = await saveDoc("journal", {
+      ...e,
+      text: t.slice(0, 3000),
+      updatedAt: nowISO()
+    }, setError);
+    if (ok) setEditingId(null);
+  };
+  if (entries === null) return h("p", {
+    className: "ojt-loading-row"
+  }, h("span", {
+    className: "ojt-spinner"
+  }), " Loading…");
+  const me = viewer ? byId[viewer.id] : null;
+  return h("div", {
+    className: "ojt-main-content ojt-page"
+  }, h("p", {
+    className: "disp",
+    style: {
+      fontSize: 24,
+      fontWeight: 600,
+      margin: 0
+    }
+  }, "OJT journal"), h("p", {
+    style: {
+      margin: "3px 0 16px",
+      color: "var(--ojt-muted)",
+      fontSize: 13.5
+    }
+  }, isOwner ? "Read what trainees wrote about their training days." : "Write about your day. You can scroll back to older entries and edit your own posts anytime."), canPost && h("div", {
+    className: "ojt-panel ojt-composer"
+  }, h("div", {
+    className: "ojt-post-head"
+  }, h(PersonAvatar, {
+    t: me,
+    name: viewer.name
+  }), h("strong", null, viewer.name)), h("textarea", {
+    className: "ojt-input",
+    rows: 4,
+    maxLength: 3000,
+    value: text,
+    onChange: e => setText(e.target.value),
+    placeholder: "What did you do today? What did you learn?",
+    "aria-label": "Write a journal entry"
+  }), h("div", {
+    className: "ojt-composer-bar"
+  }, h("span", {
+    className: "mono"
+  }, text.length, "/3000"), h("button", {
+    className: "ojt-btn ojt-btn-primary",
+    onClick: post,
+    disabled: busy || !text.trim()
+  }, busy ? "Posting…" : "Post"))), error && h("p", {
+    style: {
+      color: "var(--ojt-danger)",
+      fontSize: 13
+    }
+  }, error), h("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      flexWrap: "wrap",
+      margin: "16px 0 4px"
+    }
+  }, isOwner && h("select", {
+    className: "ojt-select",
+    style: {
+      maxWidth: 260
+    },
+    value: filterId,
+    onChange: e => {
+      setFilterId(e.target.value);
+      setLimit(10);
+    },
+    "aria-label": "Filter by trainee"
+  }, h("option", {
+    value: ""
+  }, "All trainees"), [...(trainees || [])].sort((a, b) => a.name.localeCompare(b.name)).map(t => h("option", {
+    key: t.id,
+    value: t.id
+  }, t.name))), h("input", {
+    className: "ojt-input",
+    style: {
+      maxWidth: 260
+    },
+    placeholder: "Search entries…",
+    value: query,
+    onChange: e => setQuery(e.target.value),
+    "aria-label": "Search journal entries"
+  })), visible.length === 0 ? h("div", {
+    className: "ojt-empty ojt-panel"
+  }, h("p", {
+    className: "disp"
+  }, "No entries yet"), h("p", null, canPost ? "Your first journal entry will show up here." : "Nothing has been posted yet.")) : visible.slice(0, limit).map(e => {
+    const t = byId[e.traineeId];
+    const mine = viewer && e.traineeId === viewer.id && !isOwner;
+    return h("div", {
+      key: e.id,
+      className: "ojt-panel ojt-post"
+    }, h("div", {
+      className: "ojt-post-head"
+    }, h(PersonAvatar, {
+      t,
+      name: e.authorName
+    }), h("div", {
+      style: {
+        flex: 1,
+        minWidth: 0
+      }
+    }, h("strong", null, t ? t.name : e.authorName), h("div", {
+      className: "ojt-post-meta mono"
+    }, fmtStamp(e.createdAt), e.updatedAt && h("span", {
+      title: "Last edited " + fmtStamp(e.updatedAt)
+    }, " · edited"))), (mine || isOwner) && editingId !== e.id && h("div", {
+      className: "ojt-row-actions"
+    }, mine && h("button", {
+      className: "ojt-btn ojt-btn-ghost",
+      onClick: () => {
+        setEditingId(e.id);
+        setEditText(e.text);
+      }
+    }, "Edit"), h("button", {
+      className: "ojt-btn ojt-btn-ghost",
+      onClick: () => setConfirmDelete(e.id)
+    }, "Delete"))), editingId === e.id ? h("div", null, h("textarea", {
+      className: "ojt-input",
+      rows: 5,
+      maxLength: 3000,
+      value: editText,
+      onChange: ev => setEditText(ev.target.value),
+      autoFocus: true
+    }), h("div", {
+      className: "ojt-composer-bar"
+    }, h("button", {
+      className: "ojt-btn ojt-btn-outline",
+      onClick: () => setEditingId(null)
+    }, "Cancel"), h("button", {
+      className: "ojt-btn ojt-btn-primary",
+      onClick: () => saveEdit(e),
+      disabled: !editText.trim()
+    }, "Save"))) : h("p", {
+      className: "ojt-post-body"
+    }, e.text));
+  }), visible.length > limit && h("button", {
+    className: "ojt-btn ojt-btn-outline",
+    style: {
+      margin: "6px auto 0",
+      display: "block"
+    },
+    onClick: () => setLimit(l => l + 10)
+  }, "Show older entries (", visible.length - limit, ")"), confirmDelete && h(ConfirmModal, {
+    title: "Delete this entry?",
+    message: "This journal entry will be permanently removed.",
+    onConfirm: () => {
+      removeDoc("journal", confirmDelete, setError);
+      setConfirmDelete(null);
+    },
+    onCancel: () => setConfirmDelete(null)
+  }));
+}
+const RATING_CRITERIA = [["punctuality", "Punctuality"], ["quality", "Quality of work"], ["attitude", "Attitude & teamwork"], ["initiative", "Initiative"]];
+const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+function Stars({
+  value,
+  onChange,
+  size
+}) {
+  const h = React.createElement;
+  return h("span", {
+    className: "ojt-stars",
+    style: size ? {
+      fontSize: size
+    } : null,
+    role: onChange ? "radiogroup" : "img",
+    "aria-label": `${(+value || 0).toFixed(1)} out of 5`
+  }, [1, 2, 3, 4, 5].map(n => onChange ? h("button", {
+    key: n,
+    type: "button",
+    className: "ojt-star-btn" + (n <= value ? " on" : ""),
+    onClick: () => onChange(n),
+    "aria-label": `${n} star${n > 1 ? "s" : ""}`
+  }, "★") : h("span", {
+    key: n,
+    className: n <= Math.round(value) ? "on" : ""
+  }, "★")));
+}
+function RatingForm({
+  initial,
+  onSave,
+  onCancel
+}) {
+  const h = React.createElement;
+  const [scores, setScores] = useState(initial ? initial.scores : {});
+  const [remarks, setRemarks] = useState(initial ? initial.remarks || "" : "");
+  const [err, setErr] = useState("");
+  const submit = () => {
+    if (RATING_CRITERIA.some(([k]) => !scores[k])) {
+      setErr("Rate every category (1–5 stars).");
+      return;
+    }
+    onSave(scores, remarks.trim());
+  };
+  return h("div", {
+    className: "ojt-panel",
+    style: {
+      padding: 18,
+      marginBottom: 14
+    }
+  }, h("p", {
+    className: "disp",
+    style: {
+      fontSize: 17,
+      fontWeight: 600,
+      margin: "0 0 12px"
+    }
+  }, initial ? "Edit rating" : "Rate performance"), RATING_CRITERIA.map(([k, label]) => h("div", {
+    key: k,
+    className: "ojt-rate-row"
+  }, h("span", null, label), h(Stars, {
+    value: scores[k] || 0,
+    onChange: n => setScores(s => ({
+      ...s,
+      [k]: n
+    })),
+    size: 26
+  }))), h("div", {
+    className: "ojt-field",
+    style: {
+      marginTop: 12
+    }
+  }, h("label", null, "Remarks (optional)"), h("textarea", {
+    className: "ojt-input",
+    rows: 3,
+    maxLength: 1000,
+    value: remarks,
+    onChange: e => setRemarks(e.target.value),
+    placeholder: "Strengths, areas to improve…"
+  })), err && h("p", {
+    style: {
+      color: "var(--ojt-danger)",
+      fontSize: 12.5
+    }
+  }, err), h("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      marginTop: 12
+    }
+  }, h("button", {
+    className: "ojt-btn ojt-btn-primary",
+    onClick: submit
+  }, initial ? "Save changes" : "Save rating"), h("button", {
+    className: "ojt-btn ojt-btn-outline",
+    onClick: onCancel
+  }, "Cancel")));
+}
+function RatingsPage({
+  isOwner,
+  viewer,
+  trainees
+}) {
+  const h = React.createElement;
+  const [ratings, setRatings] = useState(null);
+  const [error, setError] = useState("");
+  const [selId, setSelId] = useState(isOwner ? null : viewer && viewer.id);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  useLiveCollection("ratings", setRatings, setError);
+  if (ratings === null) return h("p", {
+    className: "ojt-loading-row"
+  }, h("span", {
+    className: "ojt-spinner"
+  }), " Loading…");
+  const forT = id => ratings.filter(r => r.traineeId === id).sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+  const overall = r => avg(RATING_CRITERIA.map(([k]) => r.scores[k] || 0));
+  const sid = isOwner ? selId : viewer && viewer.id;
+  const sel = (trainees || []).find(t => t.id === sid);
+  const list = sid ? forT(sid) : [];
+  const save = async (scores, remarks) => {
+    const base = editing || {
+      id: uid(),
+      traineeId: sid,
+      createdAt: nowISO()
+    };
+    const ok = await saveDoc("ratings", {
+      ...base,
+      scores,
+      remarks,
+      updatedAt: editing ? nowISO() : null
+    }, setError);
+    if (ok) {
+      setShowForm(false);
+      setEditing(null);
+    }
+  };
+  return h("div", {
+    className: "ojt-main-content ojt-page"
+  }, h("p", {
+    className: "disp",
+    style: {
+      fontSize: 24,
+      fontWeight: 600,
+      margin: 0
+    }
+  }, "Performance ratings"), h("p", {
+    style: {
+      margin: "3px 0 16px",
+      color: "var(--ojt-muted)",
+      fontSize: 13.5
+    }
+  }, isOwner ? "Rate how each trainee is performing. Trainees can read their own ratings." : "Ratings and remarks from your supervisor."), error && h("p", {
+    style: {
+      color: "var(--ojt-danger)",
+      fontSize: 13
+    }
+  }, error), isOwner && h("div", {
+    className: "ojt-rating-grid"
+  }, [...(trainees || [])].sort((a, b) => a.name.localeCompare(b.name)).map(t => {
+    const rs = forT(t.id);
+    const a = avg(rs.map(overall));
+    return h("button", {
+      key: t.id,
+      className: "ojt-panel ojt-rating-card" + (t.id === selId ? " active" : ""),
+      onClick: () => {
+        setSelId(t.id);
+        setShowForm(false);
+        setEditing(null);
+      }
+    }, h(PersonAvatar, {
+      t
+    }), h("div", {
+      style: {
+        minWidth: 0,
+        textAlign: "left"
+      }
+    }, h("strong", {
+      className: "ojt-roster-name"
+    }, t.name), h("div", null, rs.length ? h(Stars, {
+      value: a
+    }) : h("span", {
+      className: "mono",
+      style: {
+        fontSize: 11,
+        color: "var(--ojt-muted)"
+      }
+    }, "Not rated"), rs.length > 0 && h("span", {
+      className: "mono",
+      style: {
+        fontSize: 11,
+        marginLeft: 6
+      }
+    }, a.toFixed(1), " (", rs.length, ")"))));
+  })), isOwner && !sel && h("p", {
+    style: {
+      color: "var(--ojt-muted)"
+    }
+  }, "Select a trainee to view or add ratings."), sel && h("div", {
+    style: {
+      marginTop: isOwner ? 18 : 0
+    }
+  }, h("div", {
+    className: "ojt-post-head",
+    style: {
+      marginBottom: 12
+    }
+  }, h(PersonAvatar, {
+    t: sel,
+    large: true
+  }), h("div", {
+    style: {
+      flex: 1
+    }
+  }, h("strong", {
+    style: {
+      fontSize: 17
+    }
+  }, sel.name), h("div", null, list.length ? h("span", null, h(Stars, {
+    value: avg(list.map(overall)),
+    size: 20
+  }), h("span", {
+    className: "mono",
+    style: {
+      marginLeft: 8
+    }
+  }, avg(list.map(overall)).toFixed(2), " / 5 · ", list.length, " rating", list.length === 1 ? "" : "s")) : h("span", {
+    className: "mono",
+    style: {
+      color: "var(--ojt-muted)"
+    }
+  }, "No ratings yet"))), isOwner && !showForm && !editing && h("button", {
+    className: "ojt-btn ojt-btn-primary",
+    onClick: () => setShowForm(true)
+  }, "+ Add rating")), (showForm || editing) && h(RatingForm, {
+    initial: editing,
+    onSave: save,
+    onCancel: () => {
+      setShowForm(false);
+      setEditing(null);
+    }
+  }), list.map(r => h("div", {
+    key: r.id,
+    className: "ojt-panel ojt-post"
+  }, h("div", {
+    className: "ojt-post-head"
+  }, h("div", {
+    style: {
+      flex: 1
+    }
+  }, h(Stars, {
+    value: overall(r),
+    size: 20
+  }), h("span", {
+    className: "mono",
+    style: {
+      marginLeft: 8,
+      fontWeight: 700
+    }
+  }, overall(r).toFixed(1)), h("div", {
+    className: "ojt-post-meta mono"
+  }, fmtStamp(r.createdAt), r.updatedAt && " · edited")), isOwner && h("div", {
+    className: "ojt-row-actions"
+  }, h("button", {
+    className: "ojt-btn ojt-btn-ghost",
+    onClick: () => {
+      setEditing(r);
+      setShowForm(false);
+    }
+  }, "Edit"), h("button", {
+    className: "ojt-btn ojt-btn-ghost",
+    onClick: () => setConfirmDelete(r.id)
+  }, "Delete"))), h("div", {
+    className: "ojt-rate-breakdown"
+  }, RATING_CRITERIA.map(([k, label]) => h("div", {
+    key: k,
+    className: "ojt-rate-row"
+  }, h("span", null, label), h(Stars, {
+    value: r.scores[k] || 0
+  })))), r.remarks && h("p", {
+    className: "ojt-post-body"
+  }, r.remarks)))), confirmDelete && h(ConfirmModal, {
+    title: "Delete this rating?",
+    message: "This rating will be permanently removed.",
+    onConfirm: () => {
+      removeDoc("ratings", confirmDelete, setError);
+      setConfirmDelete(null);
+    },
     onCancel: () => setConfirmDelete(null)
   }));
 }
@@ -2225,8 +3084,8 @@ function App() {
         const db = await getDb();
         if (!db) return;
         const [locSnap, postSnap] = await Promise.all([db.collection("locations").get(), db.collection("postings").get()]);
-        setLocationsCount(locSnap.docs.length);
-        setPostingsCount(postSnap.docs.filter(d => d.data().status === "Open").length);
+        setLocationsCount(purgeExpired(db, "locations", locSnap.docs.map(d => d.data())).length);
+        setPostingsCount(purgeExpired(db, "postings", postSnap.docs.map(d => d.data())).filter(x => x.status === "Open").length);
       } catch {
         /* homepage counts are a nicety, fail quietly */
       }
@@ -2571,7 +3430,9 @@ function App() {
     home: "Home",
     attendance: "Attendance",
     locations: "Job locations",
-    hiring: "Job hiring"
+    hiring: "Job hiring",
+    journal: "Journal",
+    ratings: "Ratings"
   }[activeTab];
   return /*#__PURE__*/React.createElement("div", {
     className: "ojt-shell",
@@ -2675,7 +3536,19 @@ function App() {
       setActiveTab("hiring");
       setMobileNavOpen(false);
     }
-  }, "Job hiring"))), storageError && /*#__PURE__*/React.createElement("p", {
+  }, "Job hiring"), /*#__PURE__*/React.createElement("button", {
+    className: "ojt-nav-btn" + (activeTab === "journal" ? " active" : ""),
+    onClick: () => {
+      setActiveTab("journal");
+      setMobileNavOpen(false);
+    }
+  }, "Journal"), /*#__PURE__*/React.createElement("button", {
+    className: "ojt-nav-btn" + (activeTab === "ratings" ? " active" : ""),
+    onClick: () => {
+      setActiveTab("ratings");
+      setMobileNavOpen(false);
+    }
+  }, "Ratings"))), storageError && /*#__PURE__*/React.createElement("p", {
     style: {
       color: "var(--ojt-danger)",
       fontSize: 13,
@@ -2705,7 +3578,15 @@ function App() {
     style: {
       paddingTop: 26
     }
-  }, activeTab === "locations" ? /*#__PURE__*/React.createElement(JobLocationsPage, null) : /*#__PURE__*/React.createElement(JobHiringPage, null)) : /*#__PURE__*/React.createElement("div", {
+  }, activeTab === "locations" ? /*#__PURE__*/React.createElement(JobLocationsPage, null) : activeTab === "journal" ? /*#__PURE__*/React.createElement(JournalPage, {
+    isOwner: isOwner,
+    viewer: viewer,
+    trainees: trainees
+  }) : activeTab === "ratings" ? /*#__PURE__*/React.createElement(RatingsPage, {
+    isOwner: isOwner,
+    viewer: viewer,
+    trainees: trainees
+  }) : /*#__PURE__*/React.createElement(JobHiringPage, null)) : /*#__PURE__*/React.createElement("div", {
     className: "ojt-body"
   }, /*#__PURE__*/React.createElement("div", {
     className: "ojt-sidebar"
