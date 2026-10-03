@@ -141,6 +141,19 @@ const recordsCol = (db, traineeId) => db.collection(`trainees/${traineeId}/recor
 /* ---------- "owner" — not meaningful standalone, since each device's data is private to it ---------- */
 const getUser = () => Promise.resolve(null);
 const getInitials = name => (name || "").trim().split(/\s+/).slice(0, 2).map(p => p[0]?.toUpperCase() || "").join("") || "?";
+async function hashPin(pin) {
+  try {
+    const enc = new TextEncoder().encode("ojt-logbook-" + pin);
+    const buf = await window.crypto.subtle.digest("SHA-256", enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  } catch {
+    let h = 0;
+    for (let i = 0; i < pin.length; i++) {
+      h = (h * 31 + pin.charCodeAt(i)) | 0;
+    }
+    return "fallback-" + h;
+  }
+}
 const resizeImage = (file, maxDim = 260) => new Promise((resolve, reject) => {
   if (!file.type.startsWith("image/")) {
     reject(new Error("Not an image file"));
@@ -674,6 +687,90 @@ function HelpModal({
   }, "Close"))));
 }
 
+function AdminPinModal({
+  mode,
+  error,
+  onSubmit,
+  onCancel
+}) {
+  const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  useEffect(() => {
+    const onKey = e => {
+      if (e.key === "Escape") onCancel();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onCancel]);
+  const submit = () => {
+    if (mode === "create") {
+      if (pin.length < 4) {
+        onSubmit(null, "PIN must be at least 4 characters.");
+        return;
+      }
+      if (pin !== confirmPin) {
+        onSubmit(null, "PINs don't match.");
+        return;
+      }
+      onSubmit(pin, null);
+    } else {
+      onSubmit(pin, null);
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "ojt-modal-overlay",
+    onClick: onCancel
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ojt-modal",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-labelledby": "ojt-admin-title",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("h3", {
+    id: "ojt-admin-title",
+    className: "disp"
+  }, mode === "create" ? "Set an admin PIN" : "Enter admin PIN"), /*#__PURE__*/React.createElement("p", null, mode === "create" ? "This unlocks editing and removing trainees and their logged hours on this device. Anyone without it can still add themselves and log their own hours." : "Enter your admin PIN to edit or remove trainees and their logged hours."), /*#__PURE__*/React.createElement("div", {
+    className: "ojt-field"
+  }, /*#__PURE__*/React.createElement("label", null, "PIN"), /*#__PURE__*/React.createElement("input", {
+    className: "ojt-input",
+    type: "password",
+    inputMode: "numeric",
+    value: pin,
+    onChange: e => setPin(e.target.value),
+    autoFocus: true,
+    onKeyDown: e => e.key === "Enter" && mode !== "create" && submit()
+  })), mode === "create" && /*#__PURE__*/React.createElement("div", {
+    className: "ojt-field",
+    style: {
+      marginTop: 10
+    }
+  }, /*#__PURE__*/React.createElement("label", null, "Confirm PIN"), /*#__PURE__*/React.createElement("input", {
+    className: "ojt-input",
+    type: "password",
+    inputMode: "numeric",
+    value: confirmPin,
+    onChange: e => setConfirmPin(e.target.value),
+    onKeyDown: e => e.key === "Enter" && submit()
+  })), error && /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: "var(--ojt-danger)",
+      fontSize: 12.5,
+      marginTop: 10
+    }
+  }, error), /*#__PURE__*/React.createElement("div", {
+    className: "ojt-modal-actions",
+    style: {
+      marginTop: 16
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ojt-btn ojt-btn-outline",
+    onClick: onCancel
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
+    className: "ojt-btn ojt-btn-primary",
+    onClick: submit
+  }, mode === "create" ? "Set PIN" : "Unlock"))));
+}
+
 /* ---------- homepage ---------- */
 function HomePage({
   onNavigate,
@@ -837,6 +934,7 @@ function TraineeForm({
   onSave
 }) {
   const [name, setName] = useState(initial?.name || "");
+  const [studentId, setStudentId] = useState(initial?.studentId || "");
   const [department, setDepartment] = useState(initial?.department || "");
   const [requiredHours, setRequiredHours] = useState(initial?.requiredHours ?? 486);
   const [dailyTarget, setDailyTarget] = useState(initial?.dailyTarget ?? 8);
@@ -863,9 +961,14 @@ function TraineeForm({
       setError("Name is required.");
       return;
     }
+    if (!studentId.trim()) {
+      setError("Your student/trainee ID is required.");
+      return;
+    }
     onSave({
       id: initial?.id || uid(),
       name: name.trim(),
+      studentId: studentId.trim(),
       department: department.trim(),
       requiredHours: Number(requiredHours) || 0,
       dailyTarget: Number(dailyTarget) || 8,
@@ -940,6 +1043,13 @@ function TraineeForm({
     value: name,
     onChange: e => setName(e.target.value),
     placeholder: "Juan Dela Cruz"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "ojt-field"
+  }, /*#__PURE__*/React.createElement("label", null, "Student / trainee ID"), /*#__PURE__*/React.createElement("input", {
+    className: "ojt-input",
+    value: studentId,
+    onChange: e => setStudentId(e.target.value),
+    placeholder: "e.g. 21-1234-567"
   })), /*#__PURE__*/React.createElement("div", {
     className: "ojt-field"
   }, /*#__PURE__*/React.createElement("label", null, "Company / department"), /*#__PURE__*/React.createElement("input", {
@@ -1709,9 +1819,52 @@ function App() {
   const [showHelp, setShowHelp] = useState(false);
   const [locationsCount, setLocationsCount] = useState(null);
   const [postingsCount, setPostingsCount] = useState(null);
-  /* Standalone build: there's no shared visitor to restrict, since each device's data is
-     private to it — so the person using this copy always has full control. */
-  const [isOwner, setIsOwner] = useState(true);
+  /* Admin lock: a PIN set on this device unlocks editing/removing trainees and their
+     logged hours. Anyone without it can still add themselves and log their own hours. */
+  const [isOwner, setIsOwner] = useState(false);
+  const [adminHash, setAdminHash] = useState(() => {
+    try {
+      return window.localStorage.getItem("ojt-admin-hash");
+    } catch {
+      return null;
+    }
+  });
+  const [adminModal, setAdminModal] = useState(null); // null | "create" | "unlock"
+  const [adminError, setAdminError] = useState("");
+
+  const openAdminGate = () => {
+    if (isOwner) {
+      setIsOwner(false);
+      return;
+    }
+    setAdminError("");
+    setAdminModal(adminHash ? "unlock" : "create");
+  };
+
+  const handleAdminSubmit = async (pin, err) => {
+    if (err) {
+      setAdminError(err);
+      return;
+    }
+    const hash = await hashPin(pin);
+    if (adminModal === "create") {
+      try {
+        window.localStorage.setItem("ojt-admin-hash", hash);
+      } catch {
+        /* storage unavailable — PIN won't persist across reloads, but still unlocks now */
+      }
+      setAdminHash(hash);
+      setIsOwner(true);
+      setAdminModal(null);
+      setAdminError("");
+    } else if (hash === adminHash) {
+      setIsOwner(true);
+      setAdminModal(null);
+      setAdminError("");
+    } else {
+      setAdminError("Incorrect PIN.");
+    }
+  };
 
   /* lightweight counts for the homepage cards */
   useEffect(() => {
@@ -2099,6 +2252,11 @@ function App() {
     title: "Help"
   }, "?"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-icon-btn",
+    onClick: openAdminGate,
+    "aria-label": isOwner ? "Lock admin mode" : "Unlock admin mode",
+    title: isOwner ? "Admin unlocked — tap to lock" : "Admin"
+  }, isOwner ? "🔓" : "🔒"), /*#__PURE__*/React.createElement("button", {
+    className: "ojt-icon-btn",
     onClick: toggleTheme,
     "aria-label": theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
     title: theme === "dark" ? "Light mode" : "Dark mode"
@@ -2147,6 +2305,11 @@ function App() {
     id: "ojt-main-content"
   }), /*#__PURE__*/React.createElement(ScrollTopButton, null), showHelp && /*#__PURE__*/React.createElement(HelpModal, {
     onClose: () => setShowHelp(false)
+  }), adminModal && /*#__PURE__*/React.createElement(AdminPinModal, {
+    mode: adminModal,
+    error: adminError,
+    onSubmit: handleAdminSubmit,
+    onCancel: () => setAdminModal(null)
   }), activeTab === "home" ? /*#__PURE__*/React.createElement("div", {
     className: "ojt-main",
     style: {
@@ -2199,7 +2362,7 @@ function App() {
       className: "ojt-roster-name"
     }, t.name), /*#__PURE__*/React.createElement("div", {
       className: "ojt-roster-sub"
-    }, t.department || "No department set"))), /*#__PURE__*/React.createElement("div", {
+    }, t.studentId ? `ID ${t.studentId} · ` : "", t.department || "No department set"))), /*#__PURE__*/React.createElement("div", {
       className: "ojt-roster-bar-track"
     }, /*#__PURE__*/React.createElement("div", {
       className: "ojt-roster-bar-fill",
@@ -2256,7 +2419,7 @@ function App() {
       color: "var(--ojt-muted)",
       fontSize: 13.5
     }
-  }, selectedTrainee.department || "No department set", " · target ", selectedTrainee.dailyTarget, " hrs/day"), selectedTrainee.updatedAt && /*#__PURE__*/React.createElement("p", {
+  }, selectedTrainee.studentId ? `ID ${selectedTrainee.studentId} · ` : "", selectedTrainee.department || "No department set", " · target ", selectedTrainee.dailyTarget, " hrs/day"), selectedTrainee.updatedAt && /*#__PURE__*/React.createElement("p", {
     className: "ojt-last-updated"
   }, "Last updated ", fmtDateLong(selectedTrainee.updatedAt.slice(0, 10))), /*#__PURE__*/React.createElement("input", {
     ref: quickPhotoInputRef,
@@ -2285,7 +2448,7 @@ function App() {
       display: "flex",
       gap: 8
     }
-  }, /*#__PURE__*/React.createElement("button", {
+  }, isOwner ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
     onClick: () => {
       setShowEditTrainee(s => !s);
@@ -2294,7 +2457,13 @@ function App() {
   }, showEditTrainee ? "Close" : "Edit trainee"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
     onClick: () => setConfirmDeleteTrainee(selectedTrainee.id)
-  }, "Remove trainee"))), confirmDeleteTrainee === selectedTrainee.id && /*#__PURE__*/React.createElement(ConfirmModal, {
+  }, "Remove trainee")) : /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "var(--ojt-muted)",
+      alignSelf: "center"
+    }
+  }, "Unlock admin to edit or remove"))), confirmDeleteTrainee === selectedTrainee.id && /*#__PURE__*/React.createElement(ConfirmModal, {
     title: `Remove ${selectedTrainee.name}?`,
     message: "This trainee and all of their attendance records will be permanently deleted. This can't be undone.",
     onConfirm: () => deleteTrainee(selectedTrainee.id),
