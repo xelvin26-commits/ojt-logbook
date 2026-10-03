@@ -82,18 +82,22 @@ function createFirebaseDb() {
   const root = firebase.database().ref("store");
   const enc = path => path.replace(/\//g, "|");
   const clean = v => JSON.parse(JSON.stringify(v)); /* Realtime Database rejects undefined */
+  /* Realtime Database waits indefinitely when it can't reach the server — give up after 12s instead */
+  const withTimeout = p => Promise.race([p, new Promise((_, reject) => setTimeout(() => reject(Object.assign(new Error("Database request timed out"), {
+    code: "timeout"
+  })), 12000))]);
   const makeDoc = path => {
     const ref = root.child(enc(path));
     return {
       async get() {
-        const snap = await ref.once("value");
+        const snap = await withTimeout(ref.once("value"));
         return { exists: snap.exists(), data: () => snap.val() };
       },
       async set(value) {
-        await ref.set(clean(value));
+        await withTimeout(ref.set(clean(value)));
       },
       async delete() {
-        await ref.remove();
+        await withTimeout(ref.remove());
       }
     };
   };
@@ -111,7 +115,7 @@ function createFirebaseDb() {
     return {
       doc: id => makeDoc(path + "/" + id),
       async get() {
-        return toSnap(await query().once("value"));
+        return toSnap(await withTimeout(query().once("value")));
       },
       onSnapshot(onNext, onError) {
         const q = query();
@@ -124,6 +128,13 @@ function createFirebaseDb() {
   return { collection: makeCollection };
 }
 let _db = null;
+const dbErrorMessage = e => {
+  console.error("Database error:", e);
+  const text = String((e && e.code) || "") + " " + String((e && e.message) || "");
+  if (/timeout|timed out/i.test(text)) return "Can't reach the database (timed out). Check your internet connection and try again.";
+  if (/permission[_ ]denied/i.test(text)) return "The database is blocking this. In Firebase, open Realtime Database → Rules and publish the rules, then try again.";
+  return "Something went wrong talking to the database. Try again, or check the browser console for details.";
+};
 const getDb = () => {
   if (!_db) {
     if (!window.firebase) return Promise.reject(new Error("Firebase SDK failed to load"));
@@ -768,6 +779,8 @@ function AdminPinModal({
 }
 
 /* ---------- student login / register (view-only access) ---------- */
+/* Departments shown in the Register dropdown — edit this list to match your school/company. */
+const DEPARTMENT_OPTIONS = ["IT Department", "Accounting / Finance", "Human Resources", "Marketing", "Sales", "Operations", "Customer Service", "Administration", "Engineering"];
 function LoginScreen({
   theme,
   onLogin,
@@ -779,6 +792,8 @@ function LoginScreen({
   const [mode, setMode] = useState("login"); // "login" | "register"
   const [name, setName] = useState("");
   const [sid, setSid] = useState("");
+  const [dept, setDept] = useState("");
+  const [deptOther, setDeptOther] = useState("");
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [err, setErr] = useState("");
@@ -792,13 +807,18 @@ function LoginScreen({
   };
   const submit = async () => {
     if (busy) return;
+    const department = dept === "__other" ? deptOther.trim() : dept;
+    if (isReg && !department) {
+      setErr(dept === "__other" ? "Type your department." : "Select your department.");
+      return;
+    }
     if (isReg && pw !== pw2) {
       setErr("Passwords don't match.");
       return;
     }
     setBusy(true);
     setErr("");
-    const msg = isReg ? await onRegister(name, sid, pw) : await onLogin(sid, pw);
+    const msg = isReg ? await onRegister(name, sid, pw, department) : await onLogin(sid, pw);
     if (msg) {
       setErr(msg);
       setBusy(false);
@@ -861,7 +881,31 @@ function LoginScreen({
   }), field("Student ID", sid, setSid, {
     autoFocus: !isReg,
     autoComplete: "username"
-  }), field(isReg ? "Create password" : "Password", pw, setPw, {
+  }), isReg && h("div", {
+    className: "ojt-field",
+    style: {
+      marginTop: 10
+    }
+  }, h("label", null, "Department"), h("select", {
+    className: "ojt-input",
+    value: dept,
+    onChange: e => setDept(e.target.value)
+  }, h("option", {
+    value: ""
+  }, "Select your department"), DEPARTMENT_OPTIONS.map(d => h("option", {
+    key: d,
+    value: d
+  }, d)), h("option", {
+    value: "__other"
+  }, "Other (type your own)")), dept === "__other" && h("input", {
+    className: "ojt-input",
+    style: {
+      marginTop: 8
+    },
+    value: deptOther,
+    onChange: e => setDeptOther(e.target.value),
+    placeholder: "Your department"
+  })), field(isReg ? "Create password" : "Password", pw, setPw, {
     type: "password",
     autoComplete: isReg ? "new-password" : "current-password",
     placeholder: isReg ? "At least 6 characters" : "",
@@ -2041,7 +2085,7 @@ function App() {
     setSelectedId(t.id);
     setActiveTab("attendance");
   };
-  const studentRegister = async (nameIn, idIn, pw) => {
+  const studentRegister = async (nameIn, idIn, pw, deptIn) => {
     const sidRaw = (idIn || "").trim();
     const sid = sidRaw.toLowerCase();
     if (!sid) return "Enter your Student ID.";
@@ -2056,13 +2100,22 @@ function App() {
         const c = await db.collection("creds").doc(existing.id).get();
         if (c.exists) return "That Student ID is already registered. Please sign in instead.";
         t = existing;
+        if (!existing.department && deptIn) {
+          t = {
+            ...existing,
+            department: deptIn,
+            updatedAt: nowISO()
+          };
+          await db.collection("trainees").doc(t.id).set(t);
+          setTrainees(prev => (prev || []).map(x => x.id === t.id ? t : x));
+        }
       } else {
         if (!(nameIn || "").trim()) return "Enter your full name.";
         t = {
           id: uid(),
           name: nameIn.trim(),
           studentId: sidRaw,
-          department: "",
+          department: deptIn || "",
           requiredHours: 1800,
           dailyTarget: 8,
           photo: null,
@@ -2075,8 +2128,8 @@ function App() {
       await saveCreds(t.id, t.studentId, pw);
       startViewerSession(t);
       return "";
-    } catch {
-      return "Couldn't create the account. Check your connection and try again.";
+    } catch (e) {
+      return dbErrorMessage(e);
     }
   };
   const studentLogin = async (idIn, pw) => {
@@ -2095,8 +2148,8 @@ function App() {
         }
       }
       return "Incorrect Student ID or password.";
-    } catch {
-      return "Couldn't reach the database. Check your connection and try again.";
+    } catch (e) {
+      return dbErrorMessage(e);
     }
   };
   const logout = () => {
@@ -2305,6 +2358,7 @@ function App() {
     }
   };
   const clockIn = async () => {
+    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
     const rec = {
       id: uid(),
       date: todayStr(),
@@ -2324,6 +2378,7 @@ function App() {
     }
   };
   const clockOut = async () => {
+    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
     if (!openRecord) return;
     const updated = {
       ...openRecord,
@@ -2456,6 +2511,7 @@ function App() {
       onCancel: () => setAdminModal(null)
     }));
   }
+  const canClock = isOwner || !!(viewer && viewer.id === selectedId);
   const navLabel = {
     home: "Home",
     attendance: "Attendance",
@@ -2823,7 +2879,7 @@ function App() {
     }
   }, "Not clocked in right now")), /*#__PURE__*/React.createElement("div", {
     style: {
-      display: isOwner ? "flex" : "none",
+      display: canClock ? "flex" : "none",
       gap: 10
     }
   }, openRecord ? /*#__PURE__*/React.createElement("button", {
@@ -2834,6 +2890,9 @@ function App() {
     onClick: clockIn
   }, "Time in"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
+    style: {
+      display: isOwner ? undefined : "none"
+    },
     onClick: () => {
       setShowAddRecord(s => !s);
       setEditingRecord(null);
@@ -2872,7 +2931,7 @@ function App() {
       color: "var(--ojt-muted)",
       margin: "0 0 10px"
     }
-  }, "View only — hours can only be recorded or changed by the logbook admin."), /*#__PURE__*/React.createElement("div", {
+  }, viewer && viewer.id === selectedId ? "You can time in and out for yourself. Once an entry is saved, only the logbook admin can edit or delete it." : "View only — you can see your classmates' hours but not change them."), /*#__PURE__*/React.createElement("div", {
     className: "ojt-panel",
     style: {
       overflowX: "auto",
