@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>OJT Logbook</title>
+<meta name="description" content="OJT Logbook — track on-the-job training attendance and hours." />
+<meta name="theme-color" content="#F5B301" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -160,7 +162,7 @@ async function hashPin(pin) {
     return "fallback-" + h;
   }
 }
-const resizeImage = (file, maxDim = 260) => new Promise((resolve, reject) => {
+const resizeImage = (file, maxDim = 640) => new Promise((resolve, reject) => {
   if (!file.type.startsWith("image/")) {
     reject(new Error("Not an image file"));
     return;
@@ -187,7 +189,7 @@ const resizeImage = (file, maxDim = 260) => new Promise((resolve, reject) => {
       canvas.height = height;
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL("image/jpeg", 0.82));
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
     };
     img.onerror = () => reject(new Error("Could not read image"));
     img.src = e.target.result;
@@ -381,6 +383,29 @@ const CSS = `
 .ojt-roster-row { display: flex; align-items: center; gap: 10px; }
 .ojt-photo-picker { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
 .ojt-photo-picker input[type="file"] { font-size: 12.5px; }
+
+.ojt-reg-photo { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 14px; }
+.ojt-reg-photo-frame {
+  width: 220px; height: 220px; max-width: 100%; border-radius: 12px; overflow: hidden;
+  border: 2px dashed var(--ojt-outline-border); background: var(--ojt-track);
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  color: var(--ojt-muted); font-size: 12.5px; padding: 12px;
+}
+.ojt-reg-photo-frame.filled { border-style: solid; border-color: var(--ojt-accent); padding: 0; }
+.ojt-reg-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ojt-reg-hint { font-size: 12px; color: var(--ojt-muted); text-align: center; margin: 0; }
+img.ojt-avatar, img.ojt-avatar-sm { cursor: zoom-in; }
+.ojt-lightbox {
+  position: fixed; inset: 0; background: var(--ojt-overlay, rgba(0,0,0,.7)); z-index: 2000;
+  display: flex; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out;
+  animation: ojtFadeIn .2s ease both;
+}
+.ojt-lightbox img { max-width: min(92vw, 640px); max-height: 88vh; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,.5); background: #fff; }
+.ojt-lightbox button {
+  position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%;
+  border: none; background: #fff; color: #111; font-size: 20px; cursor: pointer;
+}
+.ojt-avatar { width: 96px; height: 96px; font-size: 30px; }
 
 @media (max-width: 760px) {
   .ojt-body { flex-direction: column; }
@@ -779,8 +804,7 @@ function AdminPinModal({
 }
 
 /* ---------- student login / register (view-only access) ---------- */
-/* Departments shown in the Register dropdown — edit this list to match your school/company. */
-const DEPARTMENT_OPTIONS = ["IT Department", "Accounting / Finance", "Human Resources", "Marketing", "Sales", "Operations", "Customer Service", "Administration", "Engineering"];
+/* Students now type their own department/section (e.g. BIT-CT-4A-Day). */
 function LoginScreen({
   theme,
   onLogin,
@@ -793,7 +817,22 @@ function LoginScreen({
   const [name, setName] = useState("");
   const [sid, setSid] = useState("");
   const [dept, setDept] = useState("");
-  const [deptOther, setDeptOther] = useState("");
+  const [photo, setPhoto] = useState(null);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const photoInputRef = useRef(null);
+  const handlePhoto = async e => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setPhotoBusy(true);
+    setErr("");
+    try {
+      setPhoto(await resizeImage(file, 640));
+    } catch {
+      setErr("Couldn't load that photo — try a different image.");
+    }
+    setPhotoBusy(false);
+  };
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [err, setErr] = useState("");
@@ -807,9 +846,13 @@ function LoginScreen({
   };
   const submit = async () => {
     if (busy) return;
-    const department = dept === "__other" ? deptOther.trim() : dept;
-    if (isReg && !department) {
-      setErr(dept === "__other" ? "Type your department." : "Select your department.");
+    const department = dept.trim().replace(/\s+/g, "");
+    if (isReg && department.length < 3) {
+      setErr("Type your department, e.g. BIT-CT-4A-Day.");
+      return;
+    }
+    if (isReg && !photo) {
+      setErr("Please upload a clear photo of your face.");
       return;
     }
     if (isReg && pw !== pw2) {
@@ -818,7 +861,7 @@ function LoginScreen({
     }
     setBusy(true);
     setErr("");
-    const msg = isReg ? await onRegister(name, sid, pw, department) : await onLogin(sid, pw);
+    const msg = isReg ? await onRegister(name, sid, pw, department, photo) : await onLogin(sid, pw);
     if (msg) {
       setErr(msg);
       setBusy(false);
@@ -850,7 +893,7 @@ function LoginScreen({
     style: {
       padding: 24,
       width: "100%",
-      maxWidth: 380
+      maxWidth: 420
     }
   }, h("img", {
     src: LOGO_SRC,
@@ -881,31 +924,41 @@ function LoginScreen({
   }), field("Student ID", sid, setSid, {
     autoFocus: !isReg,
     autoComplete: "username"
+  }), isReg && field("Department / Section", dept, setDept, {
+    placeholder: "e.g. BIT-CT-4A-Day or BIT-ET-4A-EVE",
+    autoComplete: "off",
+    autoCapitalize: "characters",
+    spellCheck: false
   }), isReg && h("div", {
+    className: "ojt-reg-photo"
+  }, h("div", {
     className: "ojt-field",
     style: {
-      marginTop: 10
+      width: "100%",
+      marginBottom: -4
     }
-  }, h("label", null, "Department"), h("select", {
-    className: "ojt-input",
-    value: dept,
-    onChange: e => setDept(e.target.value)
-  }, h("option", {
-    value: ""
-  }, "Select your department"), DEPARTMENT_OPTIONS.map(d => h("option", {
-    key: d,
-    value: d
-  }, d)), h("option", {
-    value: "__other"
-  }, "Other (type your own)")), dept === "__other" && h("input", {
-    className: "ojt-input",
+  }, h("label", null, "Your photo (required)")), h("div", {
+    className: "ojt-reg-photo-frame" + (photo ? " filled" : "")
+  }, photo ? h("img", {
+    src: photo,
+    alt: "Your photo preview"
+  }) : "No photo yet. Your face must be clearly visible so the admin can identify you."), h("input", {
+    ref: photoInputRef,
+    type: "file",
+    accept: "image/*",
+    capture: "user",
+    onChange: handlePhoto,
     style: {
-      marginTop: 8
-    },
-    value: deptOther,
-    onChange: e => setDeptOther(e.target.value),
-    placeholder: "Your department"
-  })), field(isReg ? "Create password" : "Password", pw, setPw, {
+      display: "none"
+    }
+  }), h("button", {
+    type: "button",
+    className: "ojt-btn ojt-btn-outline",
+    onClick: () => photoInputRef.current?.click(),
+    disabled: photoBusy
+  }, photoBusy ? "Loading…" : photo ? "Change photo" : "Upload / take photo"), h("p", {
+    className: "ojt-reg-hint"
+  }, "Face the camera, good lighting, no sunglasses or mask.")), field(isReg ? "Create password" : "Password", pw, setPw, {
     type: "password",
     autoComplete: isReg ? "new-password" : "current-password",
     placeholder: isReg ? "At least 6 characters" : "",
@@ -2085,7 +2138,7 @@ function App() {
     setSelectedId(t.id);
     setActiveTab("attendance");
   };
-  const studentRegister = async (nameIn, idIn, pw, deptIn) => {
+  const studentRegister = async (nameIn, idIn, pw, deptIn, photoIn) => {
     const sidRaw = (idIn || "").trim();
     const sid = sidRaw.toLowerCase();
     if (!sid) return "Enter your Student ID.";
@@ -2100,10 +2153,11 @@ function App() {
         const c = await db.collection("creds").doc(existing.id).get();
         if (c.exists) return "That Student ID is already registered. Please sign in instead.";
         t = existing;
-        if (!existing.department && deptIn) {
+        if ((!existing.department && deptIn) || (!existing.photo && photoIn)) {
           t = {
             ...existing,
-            department: deptIn,
+            department: existing.department || deptIn,
+            photo: existing.photo || photoIn || null,
             updatedAt: nowISO()
           };
           await db.collection("trainees").doc(t.id).set(t);
@@ -2111,6 +2165,7 @@ function App() {
         }
       } else {
         if (!(nameIn || "").trim()) return "Enter your full name.";
+        if (!photoIn) return "Please upload a clear photo of your face.";
         t = {
           id: uid(),
           name: nameIn.trim(),
@@ -2118,7 +2173,7 @@ function App() {
           department: deptIn || "",
           requiredHours: 1800,
           dailyTarget: 8,
-          photo: null,
+          photo: photoIn || null,
           createdAt: nowISO(),
           updatedAt: nowISO()
         };
@@ -2998,6 +3053,28 @@ function App() {
     className: "ojt-side-banner right"
   }));
 }
+/* Click any profile photo to view it full size (helps the admin identify faces). */
+document.addEventListener("click", e => {
+  const img = e.target;
+  if (!(img instanceof HTMLImageElement) || !/\bojt-avatar(-sm)?\b/.test(img.className)) return;
+  const box = document.createElement("div");
+  box.className = "ojt-lightbox";
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-label", "Photo preview");
+  const big = document.createElement("img");
+  big.src = img.src;
+  big.alt = "Full size photo";
+  const x = document.createElement("button");
+  x.textContent = "×";
+  x.setAttribute("aria-label", "Close");
+  const close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
+  const onKey = ev => { if (ev.key === "Escape") close(); };
+  box.addEventListener("click", close);
+  document.addEventListener("keydown", onKey);
+  box.append(big, x);
+  document.body.appendChild(box);
+  e.stopPropagation();
+}, true);
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
 </body>
