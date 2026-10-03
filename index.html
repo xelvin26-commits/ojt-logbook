@@ -2126,7 +2126,9 @@ function PostingForm({
     onClick: onCancel
   }, "Cancel")));
 }
-function JobHiringPage() {
+function JobHiringPage({
+  isOwner
+}) {
   const [postings, setPostings] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -2230,7 +2232,7 @@ function JobHiringPage() {
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "ojt-live-dot"
-  }), "Saved on this device"), /*#__PURE__*/React.createElement("span", null, "· Open OJT positions from partner companies, Cebu area only"))), /*#__PURE__*/React.createElement("button", {
+  }), "Saved on this device"), /*#__PURE__*/React.createElement("span", null, "· Open OJT positions from partner companies, Cebu area only"))), isOwner && /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-primary",
     onClick: () => {
       setShowForm(s => !s);
@@ -2263,7 +2265,7 @@ function JobHiringPage() {
     value: query,
     onChange: e => setQuery(e.target.value),
     "aria-label": "Search job postings"
-  })), showForm && /*#__PURE__*/React.createElement("div", {
+  })), isOwner && showForm && /*#__PURE__*/React.createElement("div", {
     className: "ojt-anim-in",
     style: {
       marginTop: 16
@@ -2282,7 +2284,7 @@ function JobHiringPage() {
     className: "ojt-empty"
   }, /*#__PURE__*/React.createElement("p", {
     className: "disp"
-  }, postings.length === 0 ? "No postings yet" : "No matches"), /*#__PURE__*/React.createElement("p", null, postings.length === 0 ? "Add an open OJT position for trainees to apply to." : "Try a different search term.")), sorted.map(p => editing === p.id ? /*#__PURE__*/React.createElement("div", {
+  }, postings.length === 0 ? "No postings yet" : "No matches"), /*#__PURE__*/React.createElement("p", null, postings.length === 0 ? (isOwner ? "Add an open OJT position for trainees to apply to." : "No open positions right now. Check back later.") : "Try a different search term.")), sorted.map(p => editing === p.id ? /*#__PURE__*/React.createElement("div", {
     key: p.id,
     className: "ojt-anim-in"
   }, /*#__PURE__*/React.createElement(PostingForm, {
@@ -2340,7 +2342,7 @@ function JobHiringPage() {
     }
   }, p.requirements), p.updatedAt && /*#__PURE__*/React.createElement("p", {
     className: "ojt-last-updated"
-  }, "Last updated ", fmtDateLong(p.updatedAt.slice(0, 10))), /*#__PURE__*/React.createElement("div", {
+  }, "Last updated ", fmtDateLong(p.updatedAt.slice(0, 10))), isOwner && /*#__PURE__*/React.createElement("div", {
     className: "ojt-row-actions",
     style: {
       marginTop: 12
@@ -3586,7 +3588,9 @@ function App() {
     isOwner: isOwner,
     viewer: viewer,
     trainees: trainees
-  }) : /*#__PURE__*/React.createElement(JobHiringPage, null)) : /*#__PURE__*/React.createElement("div", {
+  }) : /*#__PURE__*/React.createElement(JobHiringPage, {
+    isOwner: isOwner
+  })) : /*#__PURE__*/React.createElement("div", {
     className: "ojt-body"
   }, /*#__PURE__*/React.createElement("div", {
     className: "ojt-sidebar"
