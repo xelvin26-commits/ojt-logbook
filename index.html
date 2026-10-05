@@ -11,6 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <style>
   html, body { margin: 0; padding: 0; background: #F1EBD6; }
   #root { min-height: 100vh; }
@@ -66,6 +67,9 @@ const fmtDateLong = dateStr => {
   });
 };
 const hoursBetween = (a, b) => Math.max(0, (new Date(b) - new Date(a)) / 3600000);
+const breakHours = r => (r.breaks || []).reduce((sum, b) => b.end ? sum + hoursBetween(b.start, b.end) : sum, 0);
+const workedHours = r => Math.max(0, hoursBetween(r.timeIn, r.timeOut) - breakHours(r));
+const breaksText = r => (r.breaks || []).map(b => b.type + " " + fmtTime(b.start) + (b.end ? "–" + fmtTime(b.end) : "…")).join(" · ");
 const fmtHours = h => h == null || isNaN(h) ? "—" : h.toFixed(2);
 const fmtElapsed = ms => {
   const totalMin = Math.floor(ms / 60000);
@@ -144,12 +148,35 @@ const dbErrorMessage = e => {
   if (/permission[_ ]denied/i.test(text)) return "The database is blocking this. In Firebase, open Realtime Database → Rules and publish the rules, then try again.";
   return "Something went wrong talking to the database. Try again, or check the browser console for details.";
 };
-const getDb = () => {
+const loadScript = src => new Promise((res, rej) => {
+  const el = document.createElement("script");
+  el.src = src;
+  el.onload = res;
+  el.onerror = () => rej(new Error("Could not load " + src));
+  document.head.appendChild(el);
+});
+let _sdkPromise = null;
+/* Firebase is first loaded from gstatic in <head>; if that host is blocked, retry from jsDelivr. */
+const ensureFirebase = () => {
+  if (window.firebase && window.firebase.database) return Promise.resolve();
+  if (!_sdkPromise) {
+    const base = "https://cdn.jsdelivr.net/npm/firebase@10.12.2/";
+    _sdkPromise = (async () => {
+      if (!window.firebase) await loadScript(base + "firebase-app-compat.js");
+      if (!window.firebase.database) await loadScript(base + "firebase-database-compat.js");
+    })().catch(e => {
+      _sdkPromise = null;
+      throw new Error("Firebase SDK failed to load");
+    });
+  }
+  return _sdkPromise;
+};
+const getDb = async () => {
   if (!_db) {
-    if (!window.firebase) return Promise.reject(new Error("Firebase SDK failed to load"));
+    await ensureFirebase();
     _db = createFirebaseDb();
   }
-  return Promise.resolve(_db);
+  return _db;
 };
 const recordsCol = (db, traineeId) => db.collection(`trainees/${traineeId}/records`);
 
@@ -1375,6 +1402,12 @@ function LoginScreen({
   onLogin,
   onRegister,
   onAdmin,
+  gate,
+  onForgot,
+  onResend,
+  onCheck,
+  onAddEmail,
+  onGateCancel,
   children
 }) {
   const h = React.createElement;
@@ -1401,6 +1434,7 @@ function LoginScreen({
   };
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
+  const [email, setEmail] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const isReg = mode === "register";
@@ -1410,6 +1444,8 @@ function LoginScreen({
     setPw("");
     setPw2("");
   };
+  if (gate) return h(AuthShell, { theme }, h(AuthGate, { gate, onResend, onCheck, onAddEmail, onCancel: () => { onGateCancel(); setMode("login"); setErr(""); setPw(""); setPw2(""); } }), children);
+  if (mode === "forgot") return h(AuthShell, { theme }, h(ForgotPanel, { onForgot, onBack: () => switchMode("login") }), children);
   const submit = async () => {
     if (busy) return;
     const department = dept.trim().replace(/\s+/g, "");
@@ -1421,17 +1457,19 @@ function LoginScreen({
       setErr("Please upload a clear photo of your face.");
       return;
     }
+    if (isReg && !/^\S+@\S+\.\S+$/.test(email.trim())) {
+      setErr("Enter a valid email address — we'll send a verification link to it.");
+      return;
+    }
     if (isReg && pw !== pw2) {
       setErr("Passwords don't match.");
       return;
     }
     setBusy(true);
     setErr("");
-    const msg = isReg ? await onRegister(name, sid, pw, department, photo) : await onLogin(sid, pw);
-    if (msg) {
-      setErr(msg);
-      setBusy(false);
-    }
+    const msg = isReg ? await onRegister(name, sid, pw, department, photo, email) : await onLogin(sid, pw);
+    if (msg) setErr(msg);
+    setBusy(false);
   };
   const field = (label, value, setter, extra = {}) => h("div", {
     className: "ojt-field",
@@ -1487,9 +1525,13 @@ function LoginScreen({
     autoFocus: true,
     autoComplete: "name",
     placeholder: "Juan Dela Cruz"
-  }), field("Student ID", sid, setSid, {
+  }), field(isReg ? "Student ID" : "Student ID or email", sid, setSid, {
     autoFocus: !isReg,
     autoComplete: "username"
+  }), isReg && field("Email (for verification & password reset)", email, setEmail, {
+    type: "email",
+    autoComplete: "email",
+    placeholder: "you@example.com"
   }), isReg && field("Department / Section", dept, setDept, {
     placeholder: "e.g. BIT-CT-4A-Day or BIT-ET-4A-EVE",
     autoComplete: "off",
@@ -1544,7 +1586,12 @@ function LoginScreen({
     autoComplete: isReg ? "new-password" : "current-password",
     placeholder: isReg ? "At least 6 characters" : "",
     onKeyDown: e => e.key === "Enter" && !isReg && submit()
-  }), isReg && field("Confirm password", pw2, setPw2, {
+  }), !isReg && h("button", {
+    type: "button",
+    className: "ojt-btn ojt-btn-ghost",
+    style: { padding: 0, marginTop: 6, fontSize: 12.5 },
+    onClick: () => switchMode("forgot")
+  }, "Forgot password?"), isReg && field("Confirm password", pw2, setPw2, {
     type: "password",
     autoComplete: "new-password",
     onKeyDown: e => e.key === "Enter" && submit()
@@ -1673,6 +1720,7 @@ function RecordForm({
       return;
     }
     onSave({
+      ...(initial || {}),
       id: initial?.id || uid(),
       date,
       timeIn: tIn,
@@ -2853,7 +2901,7 @@ function JournalPage({
       color: "var(--ojt-muted)",
       fontSize: 13.5
     }
-  }, isOwner ? "Read what trainees wrote about their training days." : "Write about your day. You can scroll back to older entries and edit your own posts anytime."), canPost && h("div", {
+  }, isOwner ? "Read what trainees wrote about their training days." : "🔒 Private — only you can see your journal. Classmates and teammates can't. Write about your day and edit entries anytime."), canPost && h("div", {
     className: "ojt-panel ojt-composer"
   }, h("div", {
     className: "ojt-post-head"
@@ -3332,8 +3380,25 @@ function App() {
   const quickPhotoInputRef = useRef(null);
   const [theme, setTheme] = useState("light");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [navHidden, setNavHidden] = useState(() => {
+    try {
+      return window.localStorage.getItem("ojt-nav-hidden") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const toggleNav = () => setNavHidden(h => {
+    const next = !h;
+    try {
+      window.localStorage.setItem("ojt-nav-hidden", next ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+    return next;
+  });
   const [rosterQuery, setRosterQuery] = useState("");
   const [showHelp, setShowHelp] = useState(false);
+  const [showDuty, setShowDuty] = useState(false);
   const [locationsCount, setLocationsCount] = useState(null);
   const [postingsCount, setPostingsCount] = useState(null);
   /* Admin lock: a PIN set on this device unlocks editing/removing trainees and their
@@ -3399,76 +3464,170 @@ function App() {
     setSelectedId(t.id);
     setActiveTab("attendance");
   };
-  const studentRegister = async (nameIn, idIn, pw, deptIn, photoIn) => {
+  const [gate, setGate] = useState(null); // null | {type:"verify"|"addemail", ...}
+  const pendingPw = useRef("");
+  const EMAIL_RE = /^\S+@\S+\.\S+$/;
+  const CRED_ERR = /wrong-password|invalid-credential|user-not-found|invalid-login/;
+  const findByLogin = (list, v) => {
+    const k = (v || "").trim().toLowerCase();
+    return list.filter(t => (t.studentId || "").trim().toLowerCase() === k || (t.email || "").trim().toLowerCase() === k);
+  };
+  const finishAuth = (t, user) => {
+    if (user.emailVerified) {
+      setGate(null);
+      startViewerSession(t);
+    } else setGate({ type: "verify", email: user.email, traineeId: t.id });
+  };
+  const sendVerify = async user => {
+    try {
+      await user.sendEmailVerification();
+    } catch {
+      /* the verify screen has a Resend button */
+    }
+  };
+  const studentRegister = async (nameIn, idIn, pw, deptIn, photoIn, emailIn) => {
     const sidRaw = (idIn || "").trim();
     const sid = sidRaw.toLowerCase();
+    const email = (emailIn || "").trim().toLowerCase();
     if (!sid) return "Enter your Student ID.";
+    if (!EMAIL_RE.test(email)) return "Enter a valid email address.";
     if (pw.length < 6) return "Password must be at least 6 characters.";
     try {
       const db = await getDb();
       const snap = await db.collection("trainees").get();
       const existing = snap.docs.map(d => d.data()).find(t => (t.studentId || "").trim().toLowerCase() === sid);
-      let t;
       if (existing) {
-        /* An admin already added this student but no password is set yet — let them claim it. */
+        if (existing.email) return "That Student ID is already registered. Please sign in instead.";
         const c = await db.collection("creds").doc(existing.id).get();
-        if (c.exists) return "That Student ID is already registered. Please sign in instead.";
-        t = existing;
-        if ((!existing.department && deptIn) || (!existing.photo && photoIn)) {
-          t = {
-            ...existing,
-            department: existing.department || deptIn,
-            photo: existing.photo || photoIn || null,
-            updatedAt: nowISO()
-          };
-          await db.collection("trainees").doc(t.id).set(t);
-          setTrainees(prev => (prev || []).map(x => x.id === t.id ? t : x));
-        }
+        if (c.exists) return "That Student ID is already registered. Sign in with your password and you'll be asked to add and verify your email.";
       } else {
         if (!(nameIn || "").trim()) return "Enter your full name.";
         if (!photoIn) return "Please upload a clear photo of your face.";
-        t = {
-          id: uid(),
-          name: nameIn.trim(),
-          studentId: sidRaw,
-          department: deptIn || "",
-          requiredHours: 1800,
-          dailyTarget: 8,
-          photo: photoIn || null,
-          createdAt: nowISO(),
-          updatedAt: nowISO()
-        };
-        await db.collection("trainees").doc(t.id).set(t);
-        setTrainees(prev => [...(prev || []), t]);
       }
-      await saveCreds(t.id, t.studentId, pw);
-      startViewerSession(t);
+      const auth = await getAuth();
+      const cred = await auth.createUserWithEmailAndPassword(email, pw);
+      let t = existing ? { ...existing, department: existing.department || deptIn, photo: existing.photo || photoIn || null } : { id: uid(), name: nameIn.trim(), studentId: sidRaw, department: deptIn || "", requiredHours: 1800, dailyTarget: 8, photo: photoIn || null, createdAt: nowISO() };
+      t = { ...t, email, uid: cred.user.uid, updatedAt: nowISO() };
+      await db.collection("trainees").doc(t.id).set(t);
+      setTrainees(prev => existing ? (prev || []).map(x => x.id === t.id ? t : x) : [...(prev || []), t]);
+      await sendVerify(cred.user);
+      setGate({ type: "verify", email, traineeId: t.id });
       return "";
     } catch (e) {
-      return dbErrorMessage(e);
+      return authMsg(e);
     }
   };
   const studentLogin = async (idIn, pw) => {
-    const sid = (idIn || "").trim().toLowerCase();
-    if (!sid || !pw) return "Enter your Student ID and password.";
+    if (!(idIn || "").trim() || !pw) return "Enter your Student ID (or email) and password.";
+    const BAD = "Incorrect Student ID/email or password.";
     try {
       const db = await getDb();
       const snap = await db.collection("trainees").get();
-      const matches = snap.docs.map(d => d.data()).filter(t => (t.studentId || "").trim().toLowerCase() === sid);
-      const hash = await hashStudentPw(sid, pw);
+      const matches = findByLogin(snap.docs.map(d => d.data()), idIn);
       for (const t of matches) {
-        const c = await db.collection("creds").doc(t.id).get();
-        if (c.exists && c.data().passHash === hash) {
-          startViewerSession(t);
-          return "";
+        if (t.email) {
+          try {
+            const auth = await getAuth();
+            const cred = await auth.signInWithEmailAndPassword(t.email, pw);
+            finishAuth(t, cred.user);
+            return "";
+          } catch (e) {
+            if (CRED_ERR.test((e && e.code) || "")) continue;
+            throw e;
+          }
+        } else {
+          /* older account without an email: check the old password, then ask for an email */
+          const c = await db.collection("creds").doc(t.id).get();
+          if (c.exists && c.data().passHash === (await hashStudentPw(t.studentId || "", pw))) {
+            pendingPw.current = pw;
+            setGate({ type: "addemail", traineeId: t.id, name: t.name });
+            return "";
+          }
         }
       }
-      return "Incorrect Student ID or password.";
+      return BAD;
     } catch (e) {
-      return dbErrorMessage(e);
+      return authMsg(e);
+    }
+  };
+  const gateTrainee = () => (trainees || []).find(t => gate && t.id === gate.traineeId);
+  const gateResend = async () => {
+    try {
+      const a = await getAuth();
+      if (!a.currentUser) return { ok: false, msg: "Session expired. Press Cancel and sign in again." };
+      await a.currentUser.sendEmailVerification();
+      return { ok: true, msg: "Verification email sent. Check your inbox and spam folder." };
+    } catch (e) {
+      return { ok: false, msg: authMsg(e) };
+    }
+  };
+  const gateCheck = async () => {
+    try {
+      const a = await getAuth();
+      if (!a.currentUser) return { ok: false, msg: "Session expired. Press Cancel and sign in again." };
+      await a.currentUser.reload();
+      if (!a.currentUser.emailVerified) return { ok: false, msg: "Your email isn't verified yet. Open the link we emailed you, then press this button again." };
+      const t = gateTrainee();
+      if (!t) return { ok: false, msg: "Account not found." };
+      setGate(null);
+      startViewerSession(t);
+      return { ok: true, msg: "" };
+    } catch (e) {
+      return { ok: false, msg: authMsg(e) };
+    }
+  };
+  const gateCancel = async () => {
+    try {
+      (await getAuth()).signOut();
+    } catch {
+      /* ignore */
+    }
+    pendingPw.current = "";
+    setGate(null);
+  };
+  const gateAddEmail = async emailIn => {
+    const email = (emailIn || "").trim().toLowerCase();
+    if (!EMAIL_RE.test(email)) return "Enter a valid email address.";
+    const t = gateTrainee();
+    if (!t || !pendingPw.current) return "Session expired. Press Cancel and sign in again.";
+    try {
+      const a = await getAuth();
+      const cred = await a.createUserWithEmailAndPassword(email, pendingPw.current);
+      const u = { ...t, email, uid: cred.user.uid, updatedAt: nowISO() };
+      const db = await getDb();
+      await db.collection("trainees").doc(u.id).set(u);
+      setTrainees(prev => (prev || []).map(x => x.id === u.id ? u : x));
+      pendingPw.current = "";
+      await sendVerify(cred.user);
+      setGate({ type: "verify", email, traineeId: u.id });
+      return "";
+    } catch (e) {
+      return authMsg(e);
+    }
+  };
+  const forgotPassword = async v => {
+    const key = (v || "").trim();
+    const GENERIC = { ok: true, msg: "If that account exists, a password reset link was sent to its registered email. Check your inbox and spam folder." };
+    if (!key) return { ok: false, msg: "Enter your Student ID or email." };
+    try {
+      const db = await getDb();
+      const snap = await db.collection("trainees").get();
+      const t = findByLogin(snap.docs.map(d => d.data()), key)[0];
+      if (!t) return GENERIC;
+      if (!t.email) return { ok: false, msg: "This account has no email yet. Sign in once with your password and you'll be asked to add and verify one. If you forgot the password, ask your admin to reset it." };
+      await (await getAuth()).sendPasswordResetEmail(t.email);
+      return GENERIC;
+    } catch (e) {
+      if (/user-not-found/.test((e && e.code) || "")) return GENERIC;
+      return { ok: false, msg: authMsg(e) };
     }
   };
   const logout = () => {
+    try {
+      if (window.firebase && window.firebase.apps && window.firebase.apps.length && window.firebase.auth) window.firebase.auth().signOut();
+    } catch {
+      /* ignore */
+    }
     try {
       window.sessionStorage.removeItem("ojt-viewer");
     } catch {
@@ -3615,7 +3774,8 @@ function App() {
     const iv = setInterval(() => setTick(t => t + 1), 30000);
     return () => clearInterval(iv);
   }, [openRecord]);
-  const renderedHours = useMemo(() => records.reduce((sum, r) => r.timeIn && r.timeOut ? sum + hoursBetween(r.timeIn, r.timeOut) : sum, 0), [records]);
+  const onBreak = openRecord ? (openRecord.breaks || []).find(b => !b.end) : null;
+  const renderedHours = useMemo(() => records.reduce((sum, r) => r.timeIn && r.timeOut ? sum + workedHours(r) : sum, 0), [records]);
   const addTrainee = async (tIn, pw) => {
     const t = {
       ...tIn,
@@ -3673,14 +3833,16 @@ function App() {
       /* best-effort cleanup */
     }
   };
-  const clockIn = async () => {
+  const clockIn = async duty => {
     if (!isOwner && !(viewer && viewer.id === selectedId)) return;
+    if (!duty || !duty.trim()) return;
     const rec = {
       id: uid(),
       date: todayStr(),
       timeIn: nowISO(),
       timeOut: null,
-      note: ""
+      duty: duty,
+      note: duty
     };
     setRecordsById(prev => ({
       ...prev,
@@ -3698,6 +3860,10 @@ function App() {
     if (!openRecord) return;
     const updated = {
       ...openRecord,
+      breaks: (openRecord.breaks || []).map(b => b.end ? b : {
+        ...b,
+        end: nowISO()
+      }),
       timeOut: nowISO()
     };
     const list = records.map(r => r.id === updated.id ? updated : r);
@@ -3711,6 +3877,42 @@ function App() {
     } catch {
       setStorageError("Couldn't save changes. Your changes may not persist.");
     }
+  };
+  const saveOpenRecord = async updated => {
+    setRecordsById(prev => ({
+      ...prev,
+      [selectedId]: records.map(r => r.id === updated.id ? updated : r)
+    }));
+    try {
+      const db = await getDb();
+      if (db) await recordsCol(db, selectedId).doc(updated.id).set(updated);
+    } catch {
+      setStorageError("Couldn't save changes. Your changes may not persist.");
+    }
+  };
+  const startBreak = type => {
+    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
+    if (!openRecord || onBreak) return;
+    saveOpenRecord({
+      ...openRecord,
+      breaks: [...(openRecord.breaks || []), {
+        id: uid(),
+        type,
+        start: nowISO(),
+        end: null
+      }]
+    });
+  };
+  const endBreak = () => {
+    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
+    if (!openRecord || !onBreak) return;
+    saveOpenRecord({
+      ...openRecord,
+      breaks: (openRecord.breaks || []).map(b => b.end ? b : {
+        ...b,
+        end: nowISO()
+      })
+    });
   };
   const upsertRecord = async rec => {
     const exists = records.some(r => r.id === rec.id);
@@ -3745,7 +3947,7 @@ function App() {
     if (!selectedTrainee) return;
     const rows = [["Date", "Time In", "Time Out", "Hours", "Note"]];
     [...records].sort((a, b) => a.date.localeCompare(b.date) || new Date(a.timeIn) - new Date(b.timeIn)).forEach(r => {
-      rows.push([r.date, fmtTime(r.timeIn), r.timeOut ? fmtTime(r.timeOut) : "", r.timeOut ? fmtHours(hoursBetween(r.timeIn, r.timeOut)) : "", r.note || ""]);
+      rows.push([r.date, fmtTime(r.timeIn), r.timeOut ? fmtTime(r.timeOut) : "", r.timeOut ? fmtHours(workedHours(r)) : "", ((r.note || "") + ((r.breaks || []).length ? " | Breaks: " + breaksText(r) : ""))]);
     });
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], {
@@ -3764,7 +3966,7 @@ function App() {
   const traineeStats = t => {
     const recs = recordsById[t.id];
     if (!recs) return null;
-    const total = recs.reduce((sum, r) => r.timeIn && r.timeOut ? sum + hoursBetween(r.timeIn, r.timeOut) : sum, 0);
+    const total = recs.reduce((sum, r) => r.timeIn && r.timeOut ? sum + workedHours(r) : sum, 0);
     return {
       total,
       pct: t.requiredHours ? Math.min(100, total / t.requiredHours * 100) : 0
@@ -3819,7 +4021,13 @@ function App() {
       theme: theme,
       onLogin: studentLogin,
       onRegister: studentRegister,
-      onAdmin: openAdminGate
+      onAdmin: openAdminGate,
+      gate: gate,
+      onForgot: forgotPassword,
+      onResend: gateResend,
+      onCheck: gateCheck,
+      onAddEmail: gateAddEmail,
+      onGateCancel: gateCancel
     }, adminModal && /*#__PURE__*/React.createElement(AdminPinModal, {
       mode: adminModal,
       error: adminError,
@@ -3908,7 +4116,7 @@ function App() {
     className: "ojt-btn ojt-btn-primary",
     onClick: () => setShowAddTrainee(s => !s)
   }, showAddTrainee ? "Close" : "+ Add trainee"))), /*#__PURE__*/React.createElement("div", {
-    className: "ojt-nav"
+    className: "ojt-nav" + (navHidden ? " nx-nav-hidden" : "")
   }, /*#__PURE__*/React.createElement("button", {
     className: "ojt-mobile-menu-btn",
     onClick: () => setMobileNavOpen(s => !s),
@@ -3945,7 +4153,7 @@ function App() {
       setActiveTab("journal");
       setMobileNavOpen(false);
     }
-  }, "Journal"), /*#__PURE__*/React.createElement("button", {
+  }, "Journal"), ...["feed","chat","profile"].map(k => React.createElement("button", {key: k, className: "ojt-nav-btn" + (activeTab === k ? " active" : ""), onClick: () => { setActiveTab(k); setMobileNavOpen(false); }}, {feed: "News feed", chat: "Messages", profile: "Profile"}[k])), /*#__PURE__*/React.createElement("button", {
     className: "ojt-nav-btn" + (activeTab === "ratings" ? " active" : ""),
     onClick: () => {
       setActiveTab("ratings");
@@ -3957,7 +4165,12 @@ function App() {
       setActiveTab("about");
       setMobileNavOpen(false);
     }
-  }, "About us"))), storageError && /*#__PURE__*/React.createElement("p", {
+  }, "About us")), React.createElement("button", {
+    className: "nx-menu-toggle",
+    onClick: toggleNav,
+    "aria-expanded": !navHidden,
+    title: navHidden ? "Show all menu items" : "Hide the menu"
+  }, navHidden ? "☰ Show menu" : "✕ Hide menu")), storageError && /*#__PURE__*/React.createElement("p", {
     style: {
       color: "var(--ojt-danger)",
       fontSize: 13,
@@ -3987,7 +4200,7 @@ function App() {
     style: {
       paddingTop: 26
     }
-  }, activeTab === "about" ? /*#__PURE__*/React.createElement(AboutPage, null) : activeTab === "locations" ? /*#__PURE__*/React.createElement(JobLocationsPage, null) : activeTab === "journal" ? /*#__PURE__*/React.createElement(JournalPage, {
+  }, activeTab === "about" ? /*#__PURE__*/React.createElement(AboutPage, null) : activeTab === "locations" ? /*#__PURE__*/React.createElement(JobLocationsPage, null) : activeTab === "feed" ? React.createElement(FeedPage, {viewer, trainees, isOwner}) : activeTab === "chat" ? React.createElement(ChatPage, {viewer, trainees}) : activeTab === "profile" ? React.createElement(ProfilePage, {viewer, trainees, setTrainees}) : activeTab === "journal" ? /*#__PURE__*/React.createElement(JournalPage, {
     isOwner: isOwner,
     viewer: viewer,
     trainees: trainees
@@ -4218,7 +4431,13 @@ function App() {
     className: "mono"
   }, fmtTime(openRecord.timeIn)), " · elapsed", " ", /*#__PURE__*/React.createElement("span", {
     className: "mono"
-  }, fmtElapsed(Date.now() - new Date(openRecord.timeIn).getTime()))) : /*#__PURE__*/React.createElement("p", {
+  }, fmtElapsed(Date.now() - new Date(openRecord.timeIn).getTime())), onBreak && React.createElement("span", {
+    style: {
+      marginLeft: 8,
+      color: "var(--ojt-amber)",
+      fontWeight: 600
+    }
+  }, "· On " + onBreak.type.toLowerCase() + " since " + fmtTime(onBreak.start))) : /*#__PURE__*/React.createElement("p", {
     style: {
       margin: "4px 0 0",
       fontSize: 14.5,
@@ -4227,15 +4446,24 @@ function App() {
   }, "Not clocked in right now")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: canClock ? "flex" : "none",
-      gap: 10
+      gap: 10,
+      flexWrap: "wrap"
     }
-  }, openRecord ? /*#__PURE__*/React.createElement("button", {
+  }, openRecord ? React.createElement(React.Fragment, null, onBreak ? React.createElement("button", {
+    className: "ojt-btn ojt-btn-primary",
+    onClick: endBreak
+  }, "End " + onBreak.type.toLowerCase()) : ["Recess", "Lunch"].map(t => React.createElement("button", {
+    key: t,
+    className: "ojt-btn ojt-btn-outline",
+    title: "Optional — time is not counted as work hours",
+    onClick: () => startBreak(t)
+  }, "Start " + t.toLowerCase())), React.createElement("button", {
     className: "ojt-btn ojt-btn-danger",
     onClick: clockOut
-  }, "Time out") : /*#__PURE__*/React.createElement("button", {
+  }, "Time out")) : /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-primary",
-    onClick: clockIn
-  }, "Time in"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowDuty(true)
+  }, "Time in"), showDuty && React.createElement(DutyModal, {onCancel: () => setShowDuty(false), onSubmit: d => { setShowDuty(false); clockIn(d); }}), /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
     style: {
       display: isOwner ? undefined : "none"
@@ -4316,11 +4544,16 @@ function App() {
     className: "mono"
   }, r.timeOut ? fmtTime(r.timeOut) : "—"), /*#__PURE__*/React.createElement("td", {
     className: "mono"
-  }, r.timeOut ? fmtHours(hoursBetween(r.timeIn, r.timeOut)) : "in progress"), /*#__PURE__*/React.createElement("td", {
+  }, r.timeOut ? fmtHours(workedHours(r)) : "in progress"), /*#__PURE__*/React.createElement("td", {
     style: {
       color: "var(--ojt-muted)"
     }
-  }, r.note || "—"), /*#__PURE__*/React.createElement("td", null, isOwner ? /*#__PURE__*/React.createElement("div", {
+  }, r.note || "—", (r.breaks || []).length > 0 && React.createElement("div", {
+    style: {
+      fontSize: 12,
+      marginTop: 2
+    }
+  }, "☕ " + breaksText(r))), /*#__PURE__*/React.createElement("td", null, isOwner ? /*#__PURE__*/React.createElement("div", {
     className: "ojt-row-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-ghost",
@@ -4345,6 +4578,221 @@ function App() {
     className: "ojt-side-banner right"
   }));
 }
+/* ===== NEW: duty plan, news feed, messages, profile ===== */
+(function(){const s=document.createElement("style");s.textContent=`
+.nx-overlay{position:fixed;inset:0;background:var(--ojt-overlay);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.nx-modal{background:var(--ojt-panel);color:var(--ojt-fg);border:1px solid var(--ojt-border);border-radius:10px;padding:20px;width:100%;max-width:460px;max-height:90vh;overflow:auto}
+.nx-modal h3{margin:0 0 4px;font-size:20px}.nx-sub{margin:0 0 12px;color:var(--ojt-muted);font-size:13.5px}
+.nx-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.nx-chip{border:1px solid var(--ojt-outline-border);background:transparent;color:var(--ojt-fg);border-radius:99px;padding:5px 11px;font-size:12.5px;cursor:pointer}
+.nx-chip:hover,.nx-chip.on{background:var(--ojt-hover);border-color:var(--ojt-accent)}
+.nx-acts{display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--ojt-border);margin-top:10px;padding-top:8px}
+.nx-media{max-width:100%;max-height:420px;border-radius:8px;display:block;margin-top:8px}
+.nx-share{border:1px solid var(--ojt-border);border-radius:8px;padding:10px;margin-top:8px}
+.nx-cm{display:flex;gap:8px;margin-top:8px;font-size:13.5px}.nx-cm b{font-size:13px}
+.nx-chat{display:grid;grid-template-columns:240px 1fr;gap:14px;min-height:480px}
+@media(max-width:700px){.nx-chat{grid-template-columns:1fr}}
+.nx-side{display:flex;flex-direction:column;gap:4px;max-height:540px;overflow:auto}
+.nx-room{display:flex;gap:8px;align-items:center;text-align:left;border:0;background:transparent;color:var(--ojt-fg);padding:8px;border-radius:8px;cursor:pointer;font-size:14px}
+.nx-room:hover,.nx-room.on{background:var(--ojt-hover)}
+.nx-msgs{height:400px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:4px}
+.nx-b{max-width:78%;padding:7px 11px;border-radius:14px;background:var(--ojt-track);font-size:14px;word-break:break-word}
+.nx-b.me{align-self:flex-end;background:var(--ojt-accent);color:#1E1E1A}.nx-b small{display:block;opacity:.65;font-size:11px}
+.nx-cover{height:120px;border-radius:10px 10px 0 0}
+.nx-prof{margin-top:-44px;padding:0 18px 18px}.nx-prof .ojt-avatar{border:4px solid var(--ojt-panel)}
+.nx-f{display:grid;gap:4px;margin:8px 0;font-size:13px;color:var(--ojt-muted)}
+.nx-sw{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer}.nx-sw.on{border-color:var(--ojt-fg)}
+.nx-menu-toggle{margin-left:auto;align-self:center;border:1px solid var(--ojt-outline-border);background:var(--ojt-panel);color:var(--ojt-fg);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.nx-menu-toggle:hover{background:var(--ojt-hover)}
+@media(min-width:561px){.ojt-nav.nx-nav-hidden .ojt-nav-links{display:none!important}}
+@media(max-width:560px){.nx-menu-toggle{display:none!important}}
+`;document.head.appendChild(s)})();
+const nxh=React.createElement;
+function DutyModal({onSubmit,onCancel}){
+  const [v,setV]=useState("");
+  const chips=["On-field duty","Office / desk work","Client visit","Training / seminar"];
+  return nxh("div",{className:"nx-overlay",onClick:onCancel},nxh("div",{className:"nx-modal",role:"dialog","aria-label":"Today's duty",onClick:e=>e.stopPropagation()},
+    nxh("h3",{className:"disp"},"What will you do today?"),
+    nxh("p",{className:"nx-sub"},"Describe your duty or task on site before you time in."),
+    nxh("div",{className:"nx-chips"},chips.map(c=>nxh("button",{key:c,type:"button",className:"nx-chip",onClick:()=>setV(c+": ")},c))),
+    nxh("textarea",{className:"ojt-input",rows:4,maxLength:300,autoFocus:true,value:v,onChange:e=>setV(e.target.value),placeholder:"e.g. On-field duty: site inspection and encoding of survey forms"}),
+    nxh("div",{className:"ojt-composer-bar"},nxh("button",{className:"ojt-btn ojt-btn-outline",onClick:onCancel},"Cancel"),
+      nxh("button",{className:"ojt-btn ojt-btn-primary",disabled:v.trim().length<5,onClick:()=>onSubmit(v.trim())},"Time in"))));
+}
+const readDataUrl=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)});
+function NxMedia({m}){if(!m)return null;return m.type==="video"?nxh("video",{className:"nx-media",src:m.src,controls:true}):nxh("img",{className:"nx-media",src:m.src,alt:"Post photo"})}
+function FeedPage({viewer,trainees,isOwner}){
+  const [posts,setPosts]=useState(null),[err,setErr]=useState(""),[text,setText]=useState(""),[media,setMedia]=useState(null),[busy,setBusy]=useState(false),[open,setOpen]=useState({}),[cm,setCm]=useState({}),[del,setDel]=useState(null),[limit,setLimit]=useState(10);
+  useLiveCollection("posts",setPosts,setErr);
+  const byId=useMemo(()=>Object.fromEntries((trainees||[]).map(t=>[t.id,t])),[trainees]);
+  const me=viewer?byId[viewer.id]:null;
+  const save=p=>saveDoc("posts",p,setErr);
+  const pick=async e=>{const f=e.target.files?.[0];e.target.value="";if(!f)return;setErr("");
+    try{if(f.type.startsWith("image/"))setMedia({type:"image",src:await resizeImage(f,900)});
+      else if(f.type.startsWith("video/")){if(f.size>3e6)return setErr("Video too big — keep it under 3 MB.");setMedia({type:"video",src:await readDataUrl(f)})}
+      else setErr("Choose a photo or video.")}catch{setErr("Couldn't read that file.")}};
+  const publish=async()=>{if(!viewer||(!text.trim()&&!media))return;setBusy(true);
+    if(await save({id:uid(),authorId:viewer.id,authorName:viewer.name,text:text.trim().slice(0,2000),media,createdAt:nowISO(),likes:[],comments:[]})){setText("");setMedia(null)}setBusy(false)};
+  const like=p=>{if(!viewer)return;const l=p.likes||[];save({...p,likes:l.includes(viewer.id)?l.filter(x=>x!==viewer.id):[...l,viewer.id]})};
+  const comment=p=>{const t=(cm[p.id]||"").trim();if(!t||!viewer)return;save({...p,comments:[...(p.comments||[]),{id:uid(),authorId:viewer.id,authorName:viewer.name,text:t.slice(0,500),createdAt:nowISO()}]});setCm(c=>({...c,[p.id]:""}))};
+  const share=async p=>{if(!viewer)return;const src=p.shared||{authorName:p.authorName,text:p.text,media:p.media};
+    if(await save({id:uid(),authorId:viewer.id,authorName:viewer.name,text:"",media:null,shared:src,createdAt:nowISO(),likes:[],comments:[]}))save({...p,shares:(p.shares||0)+1})};
+  if(posts===null)return nxh("p",{className:"ojt-loading-row"},nxh("span",{className:"ojt-spinner"})," Loading…");
+  const list=[...posts].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  return nxh("div",{className:"ojt-main-content ojt-page",style:{maxWidth:640,margin:"0 auto"}},
+    nxh("p",{className:"disp",style:{fontSize:24,fontWeight:600,margin:"0 0 12px"}},"News feed"),
+    viewer?nxh("div",{className:"ojt-panel ojt-composer"},
+      nxh("div",{className:"ojt-post-head"},nxh(PersonAvatar,{t:me,name:viewer.name}),nxh("strong",null,viewer.name)),
+      nxh("textarea",{className:"ojt-input",rows:3,maxLength:2000,value:text,onChange:e=>setText(e.target.value),placeholder:"What's on your mind?"}),
+      media&&nxh("div",null,nxh(NxMedia,{m:media}),nxh("button",{className:"ojt-btn ojt-btn-ghost",onClick:()=>setMedia(null)},"Remove")),
+      nxh("div",{className:"ojt-composer-bar"},nxh("label",{className:"ojt-btn ojt-btn-outline",style:{cursor:"pointer"}},"📷 Photo / video",nxh("input",{type:"file",accept:"image/*,video/*",hidden:true,onChange:pick})),
+        nxh("button",{className:"ojt-btn ojt-btn-primary",disabled:busy||(!text.trim()&&!media),onClick:publish},busy?"Posting…":"Post"))):
+      nxh("p",{className:"nx-sub"},"Sign in with your student account to post, like, comment and share."),
+    err&&nxh("p",{style:{color:"var(--ojt-danger)",fontSize:13}},err),
+    list.length===0?nxh("div",{className:"ojt-empty ojt-panel"},nxh("p",{className:"disp"},"No posts yet"),nxh("p",null,"Be the first to share something.")):
+    list.slice(0,limit).map(p=>{const a=byId[p.authorId],liked=viewer&&(p.likes||[]).includes(viewer.id),cs=p.comments||[];
+      return nxh("div",{key:p.id,className:"ojt-panel ojt-post"},
+        nxh("div",{className:"ojt-post-head"},nxh(PersonAvatar,{t:a,name:p.authorName}),
+          nxh("div",{style:{flex:1,minWidth:0}},nxh("strong",null,a?a.name:p.authorName),p.shared&&" shared a post",nxh("div",{className:"ojt-post-meta mono"},fmtStamp(p.createdAt))),
+          ((viewer&&viewer.id===p.authorId)||isOwner)&&nxh("button",{className:"ojt-btn ojt-btn-ghost",onClick:()=>setDel(p.id)},"Delete")),
+        p.text&&nxh("p",{className:"ojt-post-body"},p.text),nxh(NxMedia,{m:p.media}),
+        p.shared&&nxh("div",{className:"nx-share"},nxh("strong",null,p.shared.authorName),p.shared.text&&nxh("p",{className:"ojt-post-body"},p.shared.text),nxh(NxMedia,{m:p.shared.media})),
+        nxh("div",{className:"ojt-post-meta mono",style:{marginTop:8}},(p.likes||[]).length," likes · ",cs.length," comments · ",p.shares||0," shares"),
+        nxh("div",{className:"nx-acts"},
+          nxh("button",{className:"ojt-btn ojt-btn-ghost",disabled:!viewer,onClick:()=>like(p),style:liked?{color:"var(--ojt-accent-dark)",fontWeight:700}:null},liked?"👍 Liked":"👍 Like"),
+          nxh("button",{className:"ojt-btn ojt-btn-ghost",onClick:()=>setOpen(o=>({...o,[p.id]:!o[p.id]}))},"💬 Comment"),
+          nxh("button",{className:"ojt-btn ojt-btn-ghost",disabled:!viewer,onClick:()=>share(p)},"↗ Share")),
+        open[p.id]&&nxh("div",null,cs.map(c=>nxh("div",{key:c.id,className:"nx-cm"},nxh(PersonAvatar,{t:byId[c.authorId],name:c.authorName}),nxh("div",null,nxh("b",null,c.authorName)," ",c.text))),
+          viewer&&nxh("div",{className:"nx-cm"},nxh("input",{className:"ojt-input",placeholder:"Write a comment…",value:cm[p.id]||"",onChange:e=>setCm(x=>({...x,[p.id]:e.target.value})),onKeyDown:e=>e.key==="Enter"&&comment(p)}),nxh("button",{className:"ojt-btn ojt-btn-primary",onClick:()=>comment(p)},"Send"))))}),
+    list.length>limit&&nxh("button",{className:"ojt-btn ojt-btn-outline",style:{display:"block",margin:"6px auto"},onClick:()=>setLimit(l=>l+10)},"Show more"),
+    del&&nxh(ConfirmModal,{title:"Delete this post?",message:"This post will be permanently removed.",onConfirm:()=>{removeDoc("posts",del,setErr);setDel(null)},onCancel:()=>setDel(null)}));
+}
+function ChatPage({viewer,trainees}){
+  const [groups,setGroups]=useState([]),[room,setRoom]=useState("g:all"),[msgs,setMsgs]=useState([]),[txt,setTxt]=useState(""),[err,setErr]=useState(""),[mk,setMk]=useState(false),[gn,setGn]=useState(""),[gm,setGm]=useState([]),[q,setQ]=useState("");
+  const endRef=useRef(null);
+  useEffect(()=>setMsgs([]),[room]);
+  useLiveCollection("groups",setGroups,setErr);
+  useLiveCollection("chats/"+room,setMsgs,setErr);
+  useEffect(()=>{if(endRef.current)endRef.current.scrollTop=endRef.current.scrollHeight},[msgs]);
+  if(!viewer)return nxh("div",{className:"ojt-main-content ojt-page"},nxh("p",{className:"disp",style:{fontSize:24,fontWeight:600}},"Messages"),nxh("p",{className:"nx-sub"},"Sign in with your student account to message classmates and join group chats."));
+  const others=(trainees||[]).filter(t=>t.id!==viewer.id),byId=Object.fromEntries((trainees||[]).map(t=>[t.id,t]));
+  const mine=groups.filter(g=>(g.members||[]).includes(viewer.id));
+  const dm=id=>"dm:"+[viewer.id,id].sort().join("_");
+  const title=room==="g:all"?"Everyone":room.startsWith("g:")?(groups.find(g=>"g:"+g.id===room)||{}).name||"Group":(()=>{const o=others.find(t=>dm(t.id)===room);return o?o.name:"Chat"})();
+  const send=async()=>{const t=txt.trim();if(!t)return;setTxt("");await saveDoc("chats/"+room,{id:uid(),fromId:viewer.id,fromName:viewer.name,text:t.slice(0,1000),createdAt:nowISO()},setErr)};
+  const make=async()=>{if(!gn.trim())return;const id=uid();if(await saveDoc("groups",{id,name:gn.trim().slice(0,40),members:[viewer.id,...gm],createdBy:viewer.id,createdAt:nowISO()},setErr)){setRoom("g:"+id);setMk(false);setGn("");setGm([])}};
+  const R=(id,label,photoT)=>nxh("button",{key:id,className:"nx-room"+(room===id?" on":""),onClick:()=>setRoom(id)},photoT!==undefined&&nxh(PersonAvatar,{t:photoT,name:label}),label);
+  const sorted=[...msgs].sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
+  return nxh("div",{className:"ojt-main-content ojt-page"},nxh("p",{className:"disp",style:{fontSize:24,fontWeight:600,margin:"0 0 12px"}},"Messages"),
+    nxh("div",{className:"nx-chat"},
+      nxh("div",{className:"ojt-panel nx-side",style:{padding:8}},
+        nxh("button",{className:"ojt-btn ojt-btn-primary",onClick:()=>setMk(true)},"+ New group"),
+        R("g:all","👥 Everyone"),mine.map(g=>R("g:"+g.id,"💬 "+g.name)),
+        nxh("input",{className:"ojt-input",placeholder:"Find classmate…",value:q,onChange:e=>setQ(e.target.value),style:{margin:"6px 0"}}),
+        others.filter(t=>t.name.toLowerCase().includes(q.toLowerCase())).map(t=>R(dm(t.id),t.name,t))),
+      nxh("div",{className:"ojt-panel",style:{padding:12,display:"flex",flexDirection:"column"}},
+        nxh("strong",{style:{marginBottom:6}},title),
+        nxh("div",{className:"nx-msgs",ref:endRef},sorted.length===0&&nxh("p",{className:"nx-sub"},"No messages yet — say hi!"),
+          sorted.map(m=>nxh("div",{key:m.id,className:"nx-b"+(m.fromId===viewer.id?" me":"")},room!=="dm"&&m.fromId!==viewer.id&&nxh("small",null,m.fromName),m.text,nxh("small",null,fmtStamp(m.createdAt))))),
+        err&&nxh("p",{style:{color:"var(--ojt-danger)",fontSize:13}},err),
+        nxh("div",{className:"nx-cm"},nxh("input",{className:"ojt-input",placeholder:"Type a message…",value:txt,onChange:e=>setTxt(e.target.value),onKeyDown:e=>e.key==="Enter"&&send()}),nxh("button",{className:"ojt-btn ojt-btn-primary",onClick:send},"Send")))),
+    mk&&nxh("div",{className:"nx-overlay",onClick:()=>setMk(false)},nxh("div",{className:"nx-modal",onClick:e=>e.stopPropagation()},
+      nxh("h3",{className:"disp"},"New group chat"),
+      nxh("input",{className:"ojt-input",placeholder:"Group name",maxLength:40,value:gn,onChange:e=>setGn(e.target.value),autoFocus:true}),
+      nxh("p",{className:"nx-sub",style:{marginTop:10}},"Add members"),
+      nxh("div",{style:{maxHeight:200,overflow:"auto"}},others.map(t=>nxh("label",{key:t.id,className:"nx-room"},nxh("input",{type:"checkbox",checked:gm.includes(t.id),onChange:e=>setGm(g=>e.target.checked?[...g,t.id]:g.filter(x=>x!==t.id))}),t.name))),
+      nxh("div",{className:"ojt-composer-bar"},nxh("button",{className:"ojt-btn ojt-btn-outline",onClick:()=>setMk(false)},"Cancel"),nxh("button",{className:"ojt-btn ojt-btn-primary",disabled:!gn.trim()||!gm.length,onClick:make},"Create")))));
+}
+const NX_COVERS=["#F5B301","#4C9AFF","#36B37E","#FF5630","#6554C0","#172B4D"];
+function ProfilePage({viewer,trainees,setTrainees}){
+  const [sel,setSel]=useState(viewer?viewer.id:null),[edit,setEdit]=useState(false),[f,setF]=useState({}),[msg,setMsg]=useState("");
+  const list=trainees||[],t=list.find(x=>x.id===sel)||list[0];
+  if(!t)return nxh("p",{className:"nx-sub"},"No profiles yet.");
+  const mine=viewer&&t.id===viewer.id;
+  const set=k=>e=>setF(x=>({...x,[k]:e.target.value}));
+  const start=()=>{setF({nickname:t.nickname||"",bio:t.bio||"",department:t.department||"",hometown:t.hometown||"",skills:t.skills||"",hobbies:t.hobbies||"",cover:t.cover||NX_COVERS[0],photo:t.photo||null});setEdit(true)};
+  const photo=async e=>{const file=e.target.files?.[0];e.target.value="";if(!file)return;try{const p=await resizeImage(file,400);setF(x=>({...x,photo:p}))}catch{setMsg("Couldn't read that photo.")}};
+  const save=async()=>{const u={...t,...f,updatedAt:nowISO()};setTrainees(l=>(l||[]).map(x=>x.id===u.id?u:x));setEdit(false);
+    try{const db=await getDb();await db.collection("trainees").doc(u.id).set(u);setMsg("Profile saved.")}catch(e){setMsg(dbErrorMessage(e))}};
+  const row=(l,v)=>v?nxh("p",{style:{margin:"4px 0",fontSize:14}},nxh("b",null,l+": "),v):null;
+  const fld=(l,k,ta)=>nxh("label",{className:"nx-f"},l,nxh(ta?"textarea":"input",{className:"ojt-input",rows:3,maxLength:ta?300:80,value:f[k]||"",onChange:set(k)}));
+  const cur=edit?{...t,...f}:t;
+  return nxh("div",{className:"ojt-main-content ojt-page",style:{maxWidth:640,margin:"0 auto"}},
+    nxh("p",{className:"disp",style:{fontSize:24,fontWeight:600,margin:"0 0 12px"}},mine?"My profile":"Profile"),
+    nxh("div",{className:"ojt-panel",style:{padding:0,overflow:"hidden"}},
+      nxh("div",{className:"nx-cover",style:{background:cur.cover||NX_COVERS[0]}}),
+      nxh("div",{className:"nx-prof"},nxh(PersonAvatar,{t:cur,large:true}),
+        nxh("h3",{className:"disp",style:{margin:"8px 0 0",fontSize:22}},cur.name,cur.nickname&&nxh("span",{style:{fontWeight:400,color:"var(--ojt-muted)"}}," “"+cur.nickname+"”")),
+        !edit&&nxh("div",null,cur.bio&&nxh("p",{className:"ojt-post-body"},cur.bio),row("Course / department",cur.department),row("Student ID",cur.studentId),row("Hometown",cur.hometown),row("Skills",cur.skills),row("Hobbies",cur.hobbies),
+          mine&&nxh("button",{className:"ojt-btn ojt-btn-primary",style:{marginTop:10},onClick:start},"Edit profile")),
+        edit&&nxh("div",null,nxh("label",{className:"ojt-btn ojt-btn-outline",style:{cursor:"pointer",margin:"8px 0",display:"inline-block"}},"Change photo",nxh("input",{type:"file",accept:"image/*",hidden:true,onChange:photo})),
+          nxh("div",{className:"nx-chips"},NX_COVERS.map(c=>nxh("button",{key:c,type:"button","aria-label":"Cover color "+c,className:"nx-sw"+(f.cover===c?" on":""),style:{background:c},onClick:()=>setF(x=>({...x,cover:c}))}))),
+          fld("Nickname","nickname"),fld("Bio","bio",1),fld("Course / department","department"),fld("Hometown","hometown"),fld("Skills","skills"),fld("Hobbies","hobbies"),
+          nxh("div",{className:"ojt-composer-bar"},nxh("button",{className:"ojt-btn ojt-btn-outline",onClick:()=>setEdit(false)},"Cancel"),nxh("button",{className:"ojt-btn ojt-btn-primary",onClick:save},"Save profile"))))),
+    msg&&nxh("p",{className:"nx-sub",style:{marginTop:8}},msg),
+    nxh("p",{className:"nx-sub",style:{margin:"16px 0 6px"}},"Classmates & team"),
+    nxh("div",{className:"nx-chips"},list.map(x=>nxh("button",{key:x.id,className:"nx-chip"+(x.id===t.id?" on":""),onClick:()=>{setSel(x.id);setEdit(false);setMsg("")}},x.name))));
+}
+
+
+/* ===== Email verification + forgot password (Firebase Authentication) ===== */
+const getAuth = async () => {
+  await getDb();
+  if (!window.firebase.auth) await loadScript("https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js");
+  return window.firebase.auth();
+};
+const authMsg = e => {
+  const c = String((e && e.code) || "");
+  if (/email-already-in-use/.test(c)) return "That email is already registered. Sign in, or use Forgot password.";
+  if (/invalid-email/.test(c)) return "That email address doesn't look right.";
+  if (/weak-password/.test(c)) return "Password must be at least 6 characters.";
+  if (/wrong-password|invalid-credential|user-not-found|invalid-login/.test(c)) return "Incorrect Student ID/email or password.";
+  if (/too-many-requests/.test(c)) return "Too many attempts. Please wait a few minutes and try again.";
+  if (/network-request-failed/.test(c)) return "Network problem. Check your internet connection and try again.";
+  if (/operation-not-allowed|configuration-not-found/.test(c)) return "Email/Password sign-in isn't turned on yet. In the Firebase console: Authentication → Sign-in method → Email/Password → Enable.";
+  if (/unauthorized-domain|operation-not-supported/.test(c)) return "Firebase sign-in doesn't work from this address. Host the page online, and add its domain under Authentication → Settings → Authorized domains.";
+  return dbErrorMessage(e);
+};
+function AuthShell({ theme, children }) {
+  return nxh("div", { className: "ojt-shell", "data-theme": theme }, nxh("style", null, CSS),
+    nxh("div", { className: "ojt-app", style: { display: "flex", justifyContent: "center", paddingTop: 60 } },
+      nxh("div", { className: "ojt-panel", style: { padding: 24, width: "100%", maxWidth: 420 } },
+        nxh("img", { src: DOODLE_BADGE, alt: "", style: { width: 56, height: 56, display: "block", margin: "0 auto 12px" } }), children)));
+}
+const authNote = (n, bad) => n && nxh("p", { style: { color: bad ? "var(--ojt-danger)" : "var(--ojt-amber)", fontSize: 13, margin: "10px 0 0" } }, n);
+function AuthGate({ gate, onResend, onCheck, onAddEmail, onCancel }) {
+  const [note, setNote] = useState(null), [busy, setBusy] = useState(false), [em, setEm] = useState("");
+  const run = async fn => { setBusy(true); const r = await fn(); setBusy(false); if (r && r.msg !== undefined) setNote(r); else if (typeof r === "string" && r) setNote({ ok: false, msg: r }); };
+  const center = { textAlign: "center", color: "var(--ojt-muted)", fontSize: 13.5 };
+  if (gate.type === "addemail") return nxh(React.Fragment, null,
+    nxh("h2", { className: "disp", style: { textAlign: "center", margin: "0 0 4px" } }, "Add your email"),
+    nxh("p", { style: center }, "Hi " + (gate.name || "") + "! Accounts now need a verified email so you can reset your password. We'll send a verification link."),
+    nxh("div", { className: "ojt-field", style: { marginTop: 10 } }, nxh("label", null, "Email"), nxh("input", { className: "ojt-input", type: "email", value: em, autoFocus: true, autoComplete: "email", placeholder: "you@example.com", onChange: e => setEm(e.target.value), onKeyDown: e => e.key === "Enter" && run(() => onAddEmail(em)) })),
+    authNote(note && note.msg, true),
+    nxh("button", { className: "ojt-btn ojt-btn-primary", style: { width: "100%", marginTop: 16 }, disabled: busy, onClick: () => run(() => onAddEmail(em)) }, busy ? "Please wait…" : "Send verification link"),
+    nxh("button", { className: "ojt-btn ojt-btn-ghost", style: { width: "100%", marginTop: 8 }, onClick: onCancel }, "Cancel"));
+  return nxh(React.Fragment, null,
+    nxh("h2", { className: "disp", style: { textAlign: "center", margin: "0 0 4px" } }, "Verify your email"),
+    nxh("p", { style: center }, "We sent a verification link to"),
+    nxh("p", { style: { textAlign: "center", fontWeight: 600, margin: "2px 0 8px", wordBreak: "break-all" } }, gate.email),
+    nxh("p", { style: center }, "Open the email and click the link, then come back and press the button below. Check your spam folder if you don't see it."),
+    authNote(note && note.msg, note && !note.ok),
+    nxh("button", { className: "ojt-btn ojt-btn-primary", style: { width: "100%", marginTop: 16 }, disabled: busy, onClick: () => run(onCheck) }, busy ? "Please wait…" : "I've verified my email"),
+    nxh("button", { className: "ojt-btn ojt-btn-outline", style: { width: "100%", marginTop: 8 }, disabled: busy, onClick: () => run(onResend) }, "Resend verification email"),
+    nxh("button", { className: "ojt-btn ojt-btn-ghost", style: { width: "100%", marginTop: 8 }, onClick: onCancel }, "Cancel and sign out"));
+}
+function ForgotPanel({ onForgot, onBack }) {
+  const [v, setV] = useState(""), [note, setNote] = useState(null), [busy, setBusy] = useState(false);
+  const send = async () => { if (busy) return; setBusy(true); setNote(await onForgot(v)); setBusy(false); };
+  return nxh(React.Fragment, null,
+    nxh("h2", { className: "disp", style: { textAlign: "center", margin: "0 0 4px" } }, "Forgot password"),
+    nxh("p", { style: { textAlign: "center", color: "var(--ojt-muted)", fontSize: 13.5 } }, "Enter your Student ID or email. We'll send a reset link to your registered email."),
+    nxh("div", { className: "ojt-field", style: { marginTop: 10 } }, nxh("label", null, "Student ID or email"), nxh("input", { className: "ojt-input", value: v, autoFocus: true, onChange: e => setV(e.target.value), onKeyDown: e => e.key === "Enter" && send() })),
+    authNote(note && note.msg, note && !note.ok),
+    nxh("button", { className: "ojt-btn ojt-btn-primary", style: { width: "100%", marginTop: 16 }, disabled: busy, onClick: send }, busy ? "Please wait…" : "Send reset link"),
+    nxh("button", { className: "ojt-btn ojt-btn-ghost", style: { width: "100%", marginTop: 8 }, onClick: onBack }, "Back to sign in"));
+}
+
 /* Click any profile photo to view it full size (helps the admin identify faces). */
 document.addEventListener("click", e => {
   const img = e.target;
