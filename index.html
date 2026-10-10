@@ -1271,6 +1271,129 @@ a.ojt-btn { display: inline-block; text-decoration: none; }
 .ojt-shell .nx-chip.on, .ojt-shell .nx-chip:hover { border-color:var(--ojt-accent); background:var(--ojt-hover); }
 .ojt-shell .nx-menu-toggle { background:var(--ojt-panel); }
 
+/* ================= SOCIAL SKIN: feed-first, blue, rounded cards ================= */
+.ojt-shell { --ojt-bg:#F0F2F5; --ojt-fg:#1C1E21; --ojt-muted:#65676B; --ojt-border:#DADDE1; --ojt-panel:#FFFFFF; --ojt-hover:#E7F3FF; --ojt-accent:#1877F2; --ojt-accent-dark:#1466D0; --ojt-outline-border:#CED0D4; --ojt-side-bg:#F0F2F5; --ojt-track:#E4E6EB; --ojt-table-hover:#F5F6F7; --ojt-maroon:#1877F2; --ojt-maroon-dark:#1466D0; --ojt-ink:#FFFFFF; --ojt-ok:#31A24C; --ojt-radius:8px; --ojt-closed-bg:#E4E6EB; --ojt-overlay:rgba(0,0,0,.5); --ojt-amber:#B25E00; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--ojt-bg); }
+.ojt-shell[data-theme="dark"] { --ojt-bg:#18191A; --ojt-fg:#E4E6EB; --ojt-muted:#B0B3B8; --ojt-border:#3E4042; --ojt-panel:#242526; --ojt-hover:#3A3B3C; --ojt-accent:#2D88FF; --ojt-accent-dark:#5AA3FF; --ojt-outline-border:#4E4F50; --ojt-side-bg:#18191A; --ojt-track:#3A3B3C; --ojt-table-hover:#2D2E2F; --ojt-maroon:#2D88FF; --ojt-ink:#242526; --ojt-ok:#45BD62; --ojt-closed-bg:#3A3B3C; --ojt-amber:#FFC46B; }
+.ojt-shell .ojt-side-banner { display:none !important; }
+.ojt-shell .ojt-app { box-shadow:none; max-width:1100px; background:var(--ojt-bg); }
+.ojt-shell .ojt-app .disp, .ojt-shell .ojt-header h1 { font-family:'Bricolage Grotesque',system-ui,sans-serif; letter-spacing:-.02em; }
+.ojt-shell .ojt-header { background:var(--ojt-panel); color:var(--ojt-fg); padding:8px 16px; align-items:center; border-bottom:0; box-shadow:0 1px 2px rgba(0,0,0,.18); }
+.ojt-shell .ojt-header h1 { color:var(--ojt-accent); font-size:26px; font-weight:800; }
+.ojt-shell .ojt-header p { display:none; }
+.ojt-shell .ojt-header-brand img { width:40px !important; height:40px !important; border-radius:50%; padding:0; background:transparent; }
+.ojt-shell .ojt-header .ojt-icon-btn, .ojt-shell .ojt-header .ojt-btn-outline { border:0; background:var(--ojt-track); color:var(--ojt-fg); border-radius:20px; }
+.ojt-shell .ojt-header .ojt-icon-btn:hover, .ojt-shell .ojt-header .ojt-btn-outline:hover { background:var(--ojt-hover); color:var(--ojt-fg); border:0; }
+.ojt-shell .ojt-header .ojt-btn-primary { background:var(--ojt-accent); color:#fff; border-color:var(--ojt-accent); }
+.ojt-shell .ojt-nav { background:var(--ojt-panel); padding:0 12px; gap:2px; border-bottom:1px solid var(--ojt-border); }
+.ojt-shell .ojt-nav-btn { background:transparent; border:0; border-bottom:3px solid transparent; border-radius:8px 8px 0 0; padding:13px 16px 10px; color:var(--ojt-muted); font-weight:600; }
+.ojt-shell .ojt-nav-btn:hover { background:var(--ojt-hover); color:var(--ojt-fg); }
+.ojt-shell .ojt-nav-btn.active, .ojt-shell[data-theme="dark"] .ojt-nav-btn.active { background:transparent; color:var(--ojt-accent); border:0; border-bottom:3px solid var(--ojt-accent); }
+.ojt-shell .ojt-panel, .ojt-shell .ojt-home-card, .ojt-shell .ojt-modal, .ojt-shell .nx-modal { border:0; border-radius:8px; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.ojt-shell .ojt-btn { border-radius:8px; min-height:36px; padding:8px 14px; font-size:14.5px; }
+.ojt-shell .ojt-btn-primary, .ojt-shell[data-theme="dark"] .ojt-btn-primary { background:var(--ojt-accent); color:#fff; border-color:var(--ojt-accent); }
+.ojt-shell .ojt-btn-outline { border:0; background:var(--ojt-track); }
+.ojt-shell .ojt-btn-outline:hover { background:var(--ojt-hover); border:0; }
+.ojt-shell .ojt-btn-ghost { border-radius:6px; font-weight:600; }
+.ojt-shell .ojt-btn-ghost:hover { background:var(--ojt-track); text-decoration:none; }
+.ojt-shell .ojt-input, .ojt-shell .ojt-select { background:var(--ojt-bg); border:1px solid var(--ojt-border); border-radius:8px; }
+.ojt-shell textarea.ojt-input { border-radius:12px; }
+.ojt-shell .nx-b.me, .ojt-shell[data-theme="dark"] .nx-b.me { background:var(--ojt-accent); color:#fff; }
+.ojt-shell .nx-chip { border:0; background:var(--ojt-track); font-weight:600; }
+.ojt-shell .nx-chip.on, .ojt-shell .nx-chip:hover { background:var(--ojt-hover); color:var(--ojt-accent); }
+
+/* page columns */
+.ojt-shell .nx-col { max-width:680px; margin:0 auto; }
+.ojt-shell .ojt-header::before, .ojt-shell .ojt-header::after { display:none !important; }
+.ojt-shell .ojt-header h1 { background:none; transform:none; margin-left:0; padding:0; }
+.ojt-shell .nx-cm .ojt-btn, .ojt-shell .nx-aform .ojt-btn { white-space:nowrap; }
+.ojt-shell .ojt-nav-btn { padding:12px 11px 10px; font-size:14.5px; }
+.ojt-shell .nx-col > p.disp:first-child { font-size:24px !important; font-weight:700 !important; }
+.ojt-shell .nx-prof { position:relative; z-index:1; }
+.ojt-shell .nx-prof .ojt-avatar, .ojt-shell .nx-prof .nx-ring { border:4px solid var(--ojt-panel); background-clip:padding-box; }
+.ojt-shell .nx-col.nx-wide { max-width:900px; }
+.ojt-shell .nx-name { border:0; background:transparent; padding:0; font:inherit; font-weight:700; color:var(--ojt-fg); cursor:pointer; text-align:left; }
+.ojt-shell .nx-name:hover { text-decoration:underline; }
+.ojt-shell .nx-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.ojt-shell .nx-aud { width:auto; min-height:0; padding:2px 6px; font-size:12.5px; border-radius:6px; }
+.ojt-shell .nx-sec { padding:16px; margin-bottom:14px; }
+.ojt-shell .nx-arow { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 0; border-top:1px solid var(--ojt-border); }
+.ojt-shell .nx-aform { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px; margin-bottom:6px; }
+
+/* the one thing Facebook doesn't have: a live "on duty" ring around anyone who is timed in */
+.nx-ring { display:inline-flex; position:relative; flex-shrink:0; border-radius:50%; padding:2px; background:conic-gradient(#31A24C,#8BE59E,#31A24C); animation:nxPulse 2.6s ease-in-out infinite; }
+.nx-ring::after { content:""; position:absolute; right:0; bottom:0; width:11px; height:11px; border-radius:50%; background:#31A24C; border:2px solid var(--ojt-panel); }
+@keyframes nxPulse { 0%,100% { box-shadow:0 0 0 0 rgba(49,162,76,.45); } 50% { box-shadow:0 0 0 5px rgba(49,162,76,0); } }
+.nx-duty-chip { display:inline-block; background:rgba(49,162,76,.15); color:var(--ojt-ok); font-size:12px; font-weight:700; padding:2px 9px; border-radius:99px; }
+.nx-duty-box { padding:12px 14px; margin-bottom:12px; }
+.nx-duty-row { display:flex; gap:14px; overflow-x:auto; padding:10px 2px 2px; scrollbar-width:thin; }
+.nx-story { display:flex; flex-direction:column; align-items:center; gap:4px; border:0; background:transparent; color:var(--ojt-fg); font-size:12.5px; cursor:pointer; flex:0 0 auto; }
+.nx-story .ojt-avatar-sm { width:56px; height:56px; font-size:18px; }
+
+/* friends */
+.nx-fgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:12px; }
+.nx-fcard { padding:14px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.nx-fcard .nx-sub { font-size:12.5px; }
+.nx-fphoto { border:0; background:transparent; padding:0; cursor:pointer; margin-bottom:8px; }
+.nx-facts { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:8px; width:100%; }
+.nx-facts .ojt-btn { flex:1 1 auto; }
+
+/* profile: cover photo + milestones */
+.ojt-shell .nx-cover { height:200px; border-radius:0; position:relative; }
+.nx-cover-tools { position:absolute; right:10px; bottom:10px; display:flex; gap:6px; }
+.nx-cover-btn { cursor:pointer; background:var(--ojt-panel) !important; box-shadow:0 1px 3px rgba(0,0,0,.3) !important; }
+.nx-miles { margin:12px 0 4px; padding:12px; border-radius:8px; background:var(--ojt-bg); }
+.nx-miles-top { display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:8px; }
+.nx-badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+.nx-badge { font-size:12.5px; font-weight:600; padding:4px 10px; border-radius:99px; background:var(--ojt-track); color:var(--ojt-muted); opacity:.6; }
+.nx-badge.on { background:var(--ojt-hover); color:var(--ojt-accent); opacity:1; }
+@media (max-width:560px) { .ojt-shell .nx-cover { height:140px; } }
+
+/* ================= FACEBOOK-STYLE LAYOUT: menu on the left, friends on the right ================= */
+.nx-sidehead, .nx-sideprog, .nx-rail { display:none; }
+.nx-ic { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--ojt-track); font-size:15px; line-height:1; margin-right:8px; flex:0 0 auto; }
+@media (min-width: 1000px) {
+  .ojt-shell .ojt-app { display:grid; grid-template-columns:272px minmax(0,1fr) 300px; column-gap:20px; grid-auto-rows:min-content; align-items:start; max-width:1560px; margin:0 auto; background:transparent; }
+  .ojt-shell .ojt-app.nx-no-rail { grid-template-columns:272px minmax(0,1fr); }
+  .ojt-shell .ojt-app > * { grid-column:2; min-width:0; }
+  .ojt-shell .ojt-app > .ojt-header { grid-column:1 / -1; grid-row:1; border-radius:0; }
+  .ojt-shell .ojt-app > .ojt-nav { grid-column:1; grid-row:2 / span 40; position:sticky; top:68px; align-self:start; max-height:calc(100vh - 76px); overflow-y:auto; scrollbar-width:thin; background:transparent; border:0; box-shadow:none; padding:10px 8px 20px 12px; display:block; }
+  .ojt-shell .ojt-app > .nx-rail { display:block; grid-column:3; grid-row:2 / span 40; position:sticky; top:68px; align-self:start; max-height:calc(100vh - 76px); overflow-y:auto; scrollbar-width:thin; padding:10px 12px 20px 0; }
+  .ojt-shell .ojt-app.nx-no-rail > .nx-rail { display:none; }
+
+  /* menu: vertical, with round icons */
+  .ojt-shell .ojt-nav .ojt-mobile-menu-btn, .ojt-shell .ojt-nav .nx-menu-toggle { display:none !important; }
+  .ojt-shell .ojt-app .ojt-nav.nx-nav-hidden .ojt-nav-links, .ojt-shell .ojt-nav .ojt-nav-links { display:flex !important; flex-direction:column; flex-wrap:nowrap; gap:2px; padding:0; width:100%; overflow:visible; }
+  .ojt-shell .ojt-nav .ojt-nav-btn { display:flex; align-items:center; width:100%; text-align:left; min-height:46px; padding:8px 10px; margin:0; border:0 !important; border-radius:8px; background:transparent; color:var(--ojt-fg); font-size:15px; font-weight:600; white-space:nowrap; }
+  .ojt-shell .ojt-nav .ojt-nav-btn .nx-ic { width:36px; height:36px; font-size:18px; margin-right:12px; }
+  .ojt-shell .ojt-nav .ojt-nav-btn:hover { background:var(--ojt-track); color:var(--ojt-fg); }
+  .ojt-shell .ojt-nav .ojt-nav-btn.active, .ojt-shell[data-theme="dark"] .ojt-nav .ojt-nav-btn.active { background:var(--ojt-hover); color:var(--ojt-accent); }
+  .ojt-shell .ojt-nav .ojt-nav-btn.active .nx-ic { background:var(--ojt-accent); }
+  .ojt-shell .ojt-nav .nx-search-pill { margin-bottom:4px; }
+  .ojt-shell .ojt-nav .nx-sidehead { display:flex; align-items:center; gap:10px; width:100%; border:0; background:transparent; padding:8px 10px; border-radius:8px; cursor:pointer; text-align:left; color:var(--ojt-fg); font:inherit; margin-bottom:4px; }
+  .ojt-shell .ojt-nav button.nx-sidehead:hover { background:var(--ojt-track); }
+  .nx-sidehead .ojt-avatar-sm { width:40px; height:40px; font-size:15px; }
+  .nx-sidehead-txt { display:flex; flex-direction:column; min-width:0; }
+  .nx-sidehead-txt b { font-size:15px; overflow:hidden; text-overflow:ellipsis; }
+  .nx-sidehead-txt small, .nx-sideprog small, .nx-reqcard small { display:block; color:var(--ojt-muted); font-size:12.5px; }
+  .ojt-shell .ojt-nav .nx-sideprog { display:flex; align-items:center; gap:12px; margin:14px 4px 0; padding:12px; }
+  .nx-ringp { width:54px; height:54px; border-radius:50%; display:grid; place-items:center; flex:0 0 54px; position:relative; }
+  .nx-ringp::before { content:""; position:absolute; inset:6px; border-radius:50%; background:var(--ojt-panel); }
+  .nx-ringp span { position:relative; font-size:13px; font-weight:800; }
+
+  /* right rail: contacts */
+  .nx-rail-h { display:flex; justify-content:space-between; align-items:center; padding:10px 8px 6px; color:var(--ojt-muted); font-size:16px; }
+  .nx-rail-h b { font-weight:700; }
+  .nx-link { border:0; background:transparent; color:var(--ojt-accent); font:inherit; font-size:13.5px; font-weight:600; cursor:pointer; padding:0; }
+  .nx-link:hover { text-decoration:underline; }
+  .nx-contact { display:flex; align-items:center; gap:10px; width:100%; border:0; background:transparent; color:var(--ojt-fg); padding:7px 8px; border-radius:8px; cursor:pointer; text-align:left; font:inherit; }
+  .nx-contact:hover { background:var(--ojt-track); }
+  .nx-contact .ojt-avatar-sm { width:34px; height:34px; font-size:13px; }
+  .nx-cname { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14.5px; font-weight:600; }
+  .nx-cduty { color:var(--ojt-ok); font-size:11.5px; font-weight:700; }
+  .nx-reqcard { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; margin-bottom:8px; border:0; cursor:pointer; text-align:left; color:var(--ojt-fg); font:inherit; }
+  .nx-reqcard .nx-ic { margin:0; width:36px; height:36px; background:var(--ojt-accent); }
+}
+
 /* ---------- phones & small tablets: one column, thumb-reach bottom tab bar ---------- */
 html, body { margin:0; max-width:100%; overflow-x:hidden; -webkit-text-size-adjust:100%; }
 @media (max-width: 860px) {
@@ -1396,7 +1519,7 @@ const FAQ_ITEMS = [{
   a: "Nobody but you. Since everything is saved on this device only, opening this page on a different device or browser starts with a blank slate — it won't show what's saved here."
 }, {
   q: "How do I get my attendance records out?",
-  a: "Open a trainee's profile and click \"Export CSV\" above the daily time record table to download their entries."
+  a: "Open your own attendance page and press \"Export my hours (CSV)\" above the daily time record. It includes your total hours. Only you can export your hours; an admin can export for the students in their own department."
 }, {
   q: "Can I recover a deleted trainee or entry?",
   a: "No — deletions are permanent, which is why you'll always be asked to confirm before something is removed."
@@ -1456,6 +1579,7 @@ function AdminPinModal({
   onCancel
 }) {
   const [pin, setPin] = useState("");
+  const [uname, setUname] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   useEffect(() => {
     const onKey = e => {
@@ -1476,7 +1600,7 @@ function AdminPinModal({
       }
       onSubmit(pin, null);
     } else {
-      onSubmit(pin, null);
+      onSubmit(pin, null, uname);
     }
   };
   return /*#__PURE__*/React.createElement("div", {
@@ -1491,9 +1615,9 @@ function AdminPinModal({
   }, /*#__PURE__*/React.createElement("h3", {
     id: "ojt-admin-title",
     className: "disp"
-  }, "Enter admin PIN"), /*#__PURE__*/React.createElement("p", null, mode === "create" ? "This unlocks editing and removing trainees and their logged hours on this device. Anyone without it can still add themselves and log their own hours." : "Enter your admin PIN to edit or remove trainees and their logged hours."), /*#__PURE__*/React.createElement("div", {
+  }, "Admin sign in"), /*#__PURE__*/React.createElement("p", null, mode === "create" ? "This unlocks editing and removing trainees and their logged hours on this device. Anyone without it can still add themselves and log their own hours." : "Enter your admin PIN to edit or remove trainees and their logged hours."), /*#__PURE__*/React.createElement("div", {
     className: "ojt-field"
-  }, /*#__PURE__*/React.createElement("label", null, "PIN"), /*#__PURE__*/React.createElement("input", {
+  }, React.createElement("label", null, "Username (leave empty for the main admin)"), React.createElement("input", { className: "ojt-input", value: uname, onChange: e => setUname(e.target.value), autoComplete: "off", placeholder: "e.g. callcenter.admin", style: { marginBottom: 10 }, onKeyDown: e => e.key === "Enter" && mode !== "create" && submit() }), React.createElement("label", null, "PIN / password"), /*#__PURE__*/React.createElement("input", {
     className: "ojt-input",
     type: "password",
     inputMode: "text",
@@ -1541,6 +1665,7 @@ function LoginScreen({
   onLogin,
   onRegister,
   onAdmin,
+  departments,
   gate,
   onForgot,
   onResend,
@@ -1554,6 +1679,7 @@ function LoginScreen({
   const [name, setName] = useState("");
   const [sid, setSid] = useState("");
   const [dept, setDept] = useState("");
+  const [deployId, setDeployId] = useState("");
   const [photo, setPhoto] = useState(null);
   const [photoBusy, setPhotoBusy] = useState(false);
   const photoInputRef = useRef(null);
@@ -1592,6 +1718,10 @@ function LoginScreen({
       setErr("Type your department, e.g. BIT-CT-4A-Day.");
       return;
     }
+    if (isReg && (departments || []).length && !deployId) {
+      setErr("Choose the department where you are assigned.");
+      return;
+    }
     if (isReg && !photo) {
       setErr("Please upload a clear photo of your face.");
       return;
@@ -1606,7 +1736,7 @@ function LoginScreen({
     }
     setBusy(true);
     setErr("");
-    const msg = isReg ? await onRegister(name, sid, pw, department, photo, email) : await onLogin(sid, pw);
+    const msg = isReg ? await onRegister(name, sid, pw, department, photo, email, deployId) : await onLogin(sid, pw);
     if (msg) setErr(msg);
     setBusy(false);
   };
@@ -1676,7 +1806,7 @@ function LoginScreen({
     autoComplete: "off",
     autoCapitalize: "characters",
     spellCheck: false
-  }), isReg && h("div", {
+  }), isReg && h("div", { className: "ojt-field", style: { marginTop: 10 } }, h("label", null, "Where are you assigned? (deployment department)"), departments && departments.length ? h("select", { className: "ojt-select", value: deployId, onChange: e => setDeployId(e.target.value) }, h("option", { value: "" }, "Choose department…"), departments.map(d => h("option", { key: d.id, value: d.id }, d.name))) : h("p", { className: "nx-sub", style: { margin: "4px 0 0" } }, "No departments are set up yet. Your admin will assign you.")), isReg && h("div", {
     className: "ojt-reg-photo"
   }, h("div", {
     className: "ojt-field",
@@ -1927,11 +2057,14 @@ function RecordForm({
 function TraineeForm({
   initial,
   onCancel,
-  onSave
+  onSave,
+  departments,
+  lockDeployId
 }) {
   const [name, setName] = useState(initial?.name || "");
   const [studentId, setStudentId] = useState(initial?.studentId || "");
   const [department, setDepartment] = useState(initial?.department || "");
+  const [deployId, setDeployId] = useState(initial?.deployId || "");
   const [requiredHours, setRequiredHours] = useState(initial?.requiredHours ?? 1800);
   const [dailyTarget, setDailyTarget] = useState(initial?.dailyTarget ?? 8);
   const [photo, setPhoto] = useState(initial?.photo || null);
@@ -1979,6 +2112,7 @@ function TraineeForm({
       name: name.trim(),
       studentId: studentId.trim(),
       department: department.trim(),
+      deployId: (lockDeployId || deployId) || null,
       requiredHours: Number(requiredHours) || 0,
       dailyTarget: Number(dailyTarget) || 8,
       photo: photo || null,
@@ -2066,7 +2200,7 @@ function TraineeForm({
     value: department,
     onChange: e => setDepartment(e.target.value),
     placeholder: "IT Department"
-  })), /*#__PURE__*/React.createElement("div", {
+  })), departments && departments.length ? React.createElement("div", { className: "ojt-field" }, React.createElement("label", null, "Deployment department (job site)"), React.createElement("select", { className: "ojt-select", value: lockDeployId || deployId, disabled: !!lockDeployId, onChange: e => setDeployId(e.target.value) }, React.createElement("option", { value: "" }, "Unassigned"), departments.map(d => React.createElement("option", { key: d.id, value: d.id }, d.name)))) : null, /*#__PURE__*/React.createElement("div", {
     className: "ojt-field"
   }, /*#__PURE__*/React.createElement("label", null, "Required OJT hours"), /*#__PURE__*/React.createElement("input", {
     className: "ojt-input",
@@ -2577,14 +2711,15 @@ function PersonAvatar({
   large
 }) {
   const cls = large ? "ojt-avatar" : "ojt-avatar-sm";
-  if (t && t.photo) return React.createElement("img", {
+  const av = t && t.photo ? React.createElement("img", {
     className: cls,
     src: t.photo,
     alt: (t.name || name || "") + " photo"
-  });
-  return React.createElement("div", {
+  }) : React.createElement("div", {
     className: cls
   }, getInitials(t ? t.name : name));
+  if (t && NX_DUTY.has(t.id)) return React.createElement("span", { className: "nx-ring", title: "On duty now" }, av);
+  return av;
 }
 function useLiveCollection(col, setList, setError) {
   useEffect(() => {
@@ -3194,7 +3329,24 @@ function App() {
   const [postingsCount, setPostingsCount] = useState(null);
   /* Admin lock: a PIN set on this device unlocks editing/removing trainees and their
      logged hours. Anyone without it can still add themselves and log their own hours. */
-  const [isOwner, setIsOwner] = useState(false);
+  const [adminSession, setAdminSession] = useState(null); // null | {role:"super"} | {role:"dept", id, name, username, deptId}
+  const isOwner = !!adminSession; // any signed-in admin
+  const isSuper = !!adminSession && adminSession.role === "super";
+  const setIsOwner = v => { if (!v) setAdminSession(null); };
+  const manages = t => !!t && isOwner && (isSuper || (!!adminSession.deptId && t.deployId === adminSession.deptId));
+  const [departments, setDepartments] = useState([]);
+  const [adminDocs, setAdminDocs] = useState([]);
+  const [friendDocs, setFriendDocs] = useState([]);
+  const [presence, setPresence] = useState([]);
+  const [profileFocus, setProfileFocus] = useState(null);
+  const markDuty = async (tid, name, on, since) => {
+    try {
+      const db = await getDb();
+      const d = db.collection("presence").doc(tid);
+      if (on) await d.set({ id: tid, name: name || "", since: since || nowISO() });
+      else await d.delete();
+    } catch { /* the on-duty ring is a nicety */ }
+  };
   /* Fixed admin PIN (stored only as a hash — no create/forgot-PIN flow) */
   const ADMIN_PIN_HASHES = ["29c072cea1df1a3b7d9482ea2684543af9e7c4f4d3f32bcec22be61526504d35", "fallback--1923744208"];
   /* Student session: signed-in students get view-only access to the attendance records */
@@ -3217,18 +3369,40 @@ function App() {
     setAdminModal("unlock");
   };
 
-  const handleAdminSubmit = async (pin, err) => {
+  const handleAdminSubmit = async (pin, err, username) => {
     if (err) {
       setAdminError(err);
       return;
     }
-    const hash = await hashPin(pin);
-    if (ADMIN_PIN_HASHES.includes(hash)) {
-      setIsOwner(true);
-      setAdminModal(null);
-      setAdminError("");
-    } else {
-      setAdminError("Incorrect PIN.");
+    const uname = (username || "").trim().toLowerCase();
+    if (!uname) {
+      const hash = await hashPin(pin);
+      if (ADMIN_PIN_HASHES.includes(hash)) {
+        setAdminSession({ role: "super", name: "Main admin" });
+        setAdminModal(null);
+        setAdminError("");
+      } else {
+        setAdminError("Incorrect PIN.");
+      }
+      return;
+    }
+    try {
+      const db = await getDb();
+      const snap = await db.collection("admins").get();
+      const a = snap.docs.map(d => d.data()).find(x => (x.username || "").toLowerCase() === uname);
+      const h = await hashPin("admin:" + uname + ":" + pin);
+      if (a && a.passHash === h) {
+        setAdminSession({ role: "dept", id: a.id, name: a.name, username: a.username, deptId: a.deptId });
+        const first = (trainees || []).find(t => t.deployId === a.deptId);
+        if (first) setSelectedId(first.id);
+        setAdminModal(null);
+        setAdminError("");
+        setActiveTab("admin");
+      } else {
+        setAdminError("Incorrect username or password.");
+      }
+    } catch (e) {
+      setAdminError(dbErrorMessage(e));
     }
   };
 
@@ -3259,6 +3433,14 @@ function App() {
   const pendingPw = useRef("");
   const [approvals, setApprovals] = useState([]);
   useLiveCollection(isOwner ? "approvals" : "approvals-off", setApprovals, setStorageError);
+  useLiveCollection("departments", setDepartments, setStorageError);
+  useLiveCollection(isSuper ? "admins" : "admins-off", setAdminDocs, setStorageError);
+  useLiveCollection("friends", setFriendDocs, setStorageError);
+  useLiveCollection("presence", setPresence, setStorageError);
+  NX_DUTY = new Set(presence.filter(p => Date.now() - new Date(p.since).getTime() < 18 * 3600000).map(p => p.id));
+  const approvalsScoped = isSuper ? approvals : approvals.filter(a => manages((trainees || []).find(t => t.id === a.traineeId)));
+  const friendReqCount = viewer ? friendDocs.filter(f => f.status === "pending" && f.from !== viewer.id && (f.a === viewer.id || f.b === viewer.id)).length : 0;
+  const openProfile = id => { setProfileFocus({ id, n: Date.now() }); setActiveTab("profile"); };
   const [proofView, setProofView] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const EMAIL_RE = /^\S+@\S+\.\S+$/;
@@ -3280,7 +3462,7 @@ function App() {
       /* the verify screen has a Resend button */
     }
   };
-  const studentRegister = async (nameIn, idIn, pw, deptIn, photoIn, emailIn) => {
+  const studentRegister = async (nameIn, idIn, pw, deptIn, photoIn, emailIn, deployIn) => {
     const sidRaw = (idIn || "").trim();
     const sid = sidRaw.toLowerCase();
     const email = (emailIn || "").trim().toLowerCase();
@@ -3301,7 +3483,7 @@ function App() {
       }
       const auth = await getAuth();
       const user = await createOrRecover(auth, email, pw, existing ? existing.id : null);
-      let t = existing ? { ...existing, department: existing.department || deptIn, photo: existing.photo || photoIn || null } : { id: uid(), name: nameIn.trim(), studentId: sidRaw, department: deptIn || "", requiredHours: 1800, dailyTarget: 8, photo: photoIn || null, createdAt: nowISO() };
+      let t = existing ? { ...existing, department: existing.department || deptIn, deployId: existing.deployId || deployIn || null, photo: existing.photo || photoIn || null } : { id: uid(), name: nameIn.trim(), studentId: sidRaw, department: deptIn || "", deployId: deployIn || null, requiredHours: 1800, dailyTarget: 8, photo: photoIn || null, createdAt: nowISO() };
       t = { ...t, email, uid: user.uid, updatedAt: nowISO() };
       await db.collection("trainees").doc(t.id).set(t);
       setTrainees(prev => existing ? (prev || []).map(x => x.id === t.id ? t : x) : [...(prev || []), t]);
@@ -3483,11 +3665,11 @@ function App() {
     });
   };
   const filteredTrainees = useMemo(() => {
-    const list = trainees || [];
+    const list = isOwner && !isSuper ? (trainees || []).filter(manages) : (trainees || []);
     const q = rosterQuery.trim().toLowerCase();
     if (!q) return list;
     return list.filter(t => [t.name, t.department].some(f => (f || "").toLowerCase().includes(q)));
-  }, [trainees, rosterQuery]);
+  }, [trainees, rosterQuery, adminSession]);
   const handleQuickPhoto = async e => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -3566,6 +3748,8 @@ function App() {
     })();
   }, [selectedId, recordsById]);
   const selectedTrainee = useMemo(() => (trainees || []).find(t => t.id === selectedId) || null, [trainees, selectedId]);
+  const canAdminSel = manages(selectedTrainee); // admin who controls the selected student
+  const isOwnSel = !!(viewer && viewer.id === selectedId);
   const records = recordsById[selectedId] || [];
   const openRecord = useMemo(() => {
     const withIn = records.filter(r => r.timeIn && !r.timeOut && isApproved(r));
@@ -3580,9 +3764,9 @@ function App() {
     return () => clearInterval(iv);
   }, [openRecord]);
   const onBreak = openRecord ? (openRecord.breaks || []).find(b => !b.end) : null;
-  const pendingRecord = records.find(r => r.timeIn && !r.timeOut && r.approval && r.approval.status === "pending") || (isOwner && !openRecord ? (() => {
+  const pendingRecord = records.find(r => r.timeIn && !r.timeOut && r.approval && r.approval.status === "pending") || (canAdminSel && !openRecord ? (() => {
     /* the admin's cached list can be older than a brand-new request, so also use the live queue */
-    const q = approvals.find(x => x.traineeId === selectedId);
+    const q = approvalsScoped.find(x => x.traineeId === selectedId);
     return q ? { id: q.id, date: q.date, timeIn: q.requestedAt, timeOut: null, duty: q.duty, note: q.duty, proof: q.proof, approval: { status: "pending", requestedAt: q.requestedAt } } : null;
   })() : null);
   const lastDeclined = !openRecord && !pendingRecord ? records.filter(r => r.approval && r.approval.status === "declined" && r.date === todayStr()).sort((a, b) => new Date(b.timeIn) - new Date(a.timeIn))[0] || null : null;
@@ -3626,6 +3810,7 @@ function App() {
   };
   const editTrainee = async (tIn, pw) => {
     const t = {
+      ...((trainees || []).find(x => x.id === tIn.id) || {}),
       ...tIn,
       updatedAt: nowISO()
     };
@@ -3657,6 +3842,7 @@ function App() {
       if (db) {
         await db.collection("trainees").doc(id).delete();
         await db.collection("creds").doc(id).delete();
+        markDuty(id, "", false);
         const snap = await recordsCol(db, id).get();
         await Promise.all(snap.docs.map(d => recordsCol(db, id).doc(d.id).delete()));
       }
@@ -3665,10 +3851,10 @@ function App() {
     }
   };
   const clockIn = async (duty, proof) => {
-    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
+    if (!canAdminSel && !(viewer && viewer.id === selectedId)) return;
     if (!duty || !duty.trim()) return;
-    if (!isOwner && !(proof && proof.photo && typeof proof.lat === "number")) return;
-    const needsApproval = !isOwner;
+    if (!canAdminSel && !(proof && proof.photo && typeof proof.lat === "number")) return;
+    const needsApproval = !canAdminSel;
     const rec = {
       id: uid(),
       date: todayStr(),
@@ -3689,6 +3875,7 @@ function App() {
       const db = await getDb();
       if (db) {
         await recordsCol(db, selectedId).doc(rec.id).set(rec);
+        if (!needsApproval) markDuty(selectedId, selectedTrainee ? selectedTrainee.name : "", true, rec.timeIn);
         if (needsApproval) await db.collection("approvals").doc(rec.id).set({ id: rec.id, traineeId: selectedId, traineeName: selectedTrainee ? selectedTrainee.name : "", date: rec.date, requestedAt: rec.timeIn, duty: duty, proof: proof });
       }
     } catch {
@@ -3720,6 +3907,7 @@ function App() {
         setRecordsById(prev => prev[a.traineeId] ? { ...prev, [a.traineeId]: prev[a.traineeId].some(x => x.id === a.id) ? prev[a.traineeId].map(x => x.id === a.id ? upd : x) : [...prev[a.traineeId], upd] } : prev);
       }
       if (status === "approved" && a.proof && a.proof.photo) await db.collection("proofs").doc(a.id).set({ id: a.id, traineeId: a.traineeId, photo: a.proof.photo });
+      if (status === "approved") markDuty(a.traineeId, a.traineeName, true, a.requestedAt);
       await db.collection("approvals").doc(a.id).delete();
     } catch (e) {
       setStorageError(dbErrorMessage(e));
@@ -3738,7 +3926,7 @@ function App() {
     }
   };
   const clockOut = async () => {
-    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
+    if (!canAdminSel && !(viewer && viewer.id === selectedId)) return;
     if (!openRecord) return;
     const updated = {
       ...openRecord,
@@ -3756,6 +3944,7 @@ function App() {
     try {
       const db = await getDb();
       if (db) await recordsCol(db, selectedId).doc(updated.id).set(updated);
+      markDuty(selectedId, "", false);
     } catch {
       setStorageError("Couldn't save changes. Your changes may not persist.");
     }
@@ -3773,7 +3962,7 @@ function App() {
     }
   };
   const startBreak = type => {
-    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
+    if (!canAdminSel && !(viewer && viewer.id === selectedId)) return;
     if (!openRecord || onBreak) return;
     saveOpenRecord({
       ...openRecord,
@@ -3786,7 +3975,7 @@ function App() {
     });
   };
   const endBreak = () => {
-    if (!isOwner && !(viewer && viewer.id === selectedId)) return;
+    if (!canAdminSel && !(viewer && viewer.id === selectedId)) return;
     if (!openRecord || !onBreak) return;
     saveOpenRecord({
       ...openRecord,
@@ -3813,6 +4002,8 @@ function App() {
     }
   };
   const deleteRecord = async id => {
+    const gone = records.find(r => r.id === id);
+    if (gone && gone.timeIn && !gone.timeOut) markDuty(selectedId, "", false);
     setRecordsById(prev => ({
       ...prev,
       [selectedId]: records.filter(r => r.id !== id)
@@ -3826,11 +4017,13 @@ function App() {
     }
   };
   const exportCSV = () => {
-    if (!selectedTrainee) return;
+    if (!selectedTrainee || !(isOwnSel || canAdminSel)) return;
     const rows = [["Date", "Time In", "Time Out", "Hours", "Note"]];
     [...records].sort((a, b) => a.date.localeCompare(b.date) || new Date(a.timeIn) - new Date(b.timeIn)).forEach(r => {
-      rows.push([r.date, fmtTime(r.timeIn), r.timeOut ? fmtTime(r.timeOut) : "", r.timeOut ? fmtHours(workedHours(r)) : "", ((r.note || "") + ((r.breaks || []).length ? " | Breaks: " + breaksText(r) : ""))]);
+      rows.push([r.date, fmtTime(r.timeIn), r.timeOut ? fmtTime(r.timeOut) : "", r.timeOut ? fmtHours(workedHours(r)) : "", ((r.note || "") + ((r.breaks || []).length ? " | Breaks: " + breaksText(r) : "")).trim()]);
     });
+    const req = Number(selectedTrainee.requiredHours) || 0;
+    rows.push([], ["Trainee", selectedTrainee.name], ["Required hours", req || ""], ["Total hours rendered", fmtHours(renderedHours)], ["Hours remaining", req ? fmtHours(Math.max(0, req - renderedHours)) : ""]);
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], {
       type: "text/csv"
@@ -3901,6 +4094,7 @@ function App() {
   if (!isOwner && !viewer) {
     return /*#__PURE__*/React.createElement(LoginScreen, {
       theme: theme,
+      departments: departments,
       onLogin: studentLogin,
       onRegister: studentRegister,
       onAdmin: openAdminGate,
@@ -3917,14 +4111,20 @@ function App() {
       onCancel: () => setAdminModal(null)
     }));
   }
-  const canClock = isOwner || !!(viewer && viewer.id === selectedId);
+  const canClock = canAdminSel || !!(viewer && viewer.id === selectedId);
   const navLabel = {
     home: "Home",
     attendance: "Attendance",
     hiring: "Job hiring",
     journal: "Journal",
     ratings: "Ratings",
-    about: "About us"
+    about: "About us",
+    feed: "News feed",
+    friends: "Friends",
+    chat: "Messages",
+    profile: "Profile",
+    approvals: "Approvals",
+    admin: "Admin"
   }[activeTab];
   return /*#__PURE__*/React.createElement("div", {
     className: "ojt-shell",
@@ -3932,7 +4132,7 @@ function App() {
   }, /*#__PURE__*/React.createElement("style", null, CSS), /*#__PURE__*/React.createElement("div", {
     className: "ojt-side-banner left"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "ojt-app"
+    className: "ojt-app" + (activeTab === "attendance" ? " nx-no-rail" : "")
   }, /*#__PURE__*/React.createElement("a", {
     href: "#ojt-main-content",
     className: "ojt-skip-link"
@@ -3984,7 +4184,7 @@ function App() {
     className: "ojt-icon-btn",
     onClick: openAdminGate,
     "aria-label": isOwner ? "Lock admin mode" : "Unlock admin mode",
-    title: isOwner ? "Admin unlocked — tap to lock" : "Admin"
+    title: isOwner ? "Signed in as " + adminSession.name + " — tap to lock" : "Admin"
   }, isOwner ? "🔓" : "🔒"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-icon-btn",
     onClick: toggleTheme,
@@ -3993,7 +4193,7 @@ function App() {
   }, theme === "dark" ? "☀" : "☾"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
     onClick: logout
-  }, "Log out"), activeTab === "attendance" && isOwner && /*#__PURE__*/React.createElement("button", {
+  }, "Log out"), activeTab === "attendance" && isSuper && /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-primary",
     onClick: () => setShowAddTrainee(s => !s)
   }, showAddTrainee ? "Close" : "+ Add trainee"))), /*#__PURE__*/React.createElement("div", {
@@ -4002,7 +4202,7 @@ function App() {
     className: "ojt-mobile-menu-btn",
     onClick: () => setMobileNavOpen(s => !s),
     "aria-expanded": mobileNavOpen
-  }, "☰ ", navLabel), /*#__PURE__*/React.createElement("div", {
+  }, "☰ ", navLabel), React.createElement(NxSideHead, { viewer, trainees, adminSession, departments, onProfile: () => setActiveTab("profile") }), /*#__PURE__*/React.createElement("div", {
     className: "ojt-nav-links" + (mobileNavOpen ? " open" : "")
   }, React.createElement("button", {
     className: "ojt-nav-btn nx-search-pill" + (searchOpen ? " active" : ""),
@@ -4015,37 +4215,37 @@ function App() {
       setActiveTab("home");
       setMobileNavOpen(false);
     }
-  }, "Home"), /*#__PURE__*/React.createElement("button", {
+  }, React.createElement("span", { className: "nx-ic" }, "🏠"), "Home"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-nav-btn" + (activeTab === "attendance" ? " active" : ""),
     onClick: () => {
       setActiveTab("attendance");
       setMobileNavOpen(false);
     }
-  }, "Attendance"), /*#__PURE__*/React.createElement("button", {
+  }, React.createElement("span", { className: "nx-ic" }, "🕒"), "Attendance"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-nav-btn" + (activeTab === "hiring" ? " active" : ""),
     onClick: () => {
       setActiveTab("hiring");
       setMobileNavOpen(false);
     }
-  }, "Job hiring"), /*#__PURE__*/React.createElement("button", {
+  }, React.createElement("span", { className: "nx-ic" }, "💼"), "Job hiring"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-nav-btn" + (activeTab === "journal" ? " active" : ""),
     onClick: () => {
       setActiveTab("journal");
       setMobileNavOpen(false);
     }
-  }, "Journal"), ...(isOwner ? ["approvals","feed","chat","profile"] : ["feed","chat","profile"]).map(k => React.createElement("button", {key: k, className: "ojt-nav-btn" + (activeTab === k ? " active" : ""), onClick: () => { setActiveTab(k); setMobileNavOpen(false); }}, {approvals: "Approvals" + (approvals.length ? " (" + approvals.length + ")" : ""), feed: "News feed", chat: "Messages", profile: "Profile"}[k])), /*#__PURE__*/React.createElement("button", {
+  }, React.createElement("span", { className: "nx-ic" }, "📓"), "Journal"), ...(isOwner ? ["approvals","admin","feed","chat","profile"] : ["feed","friends","chat","profile"]).map(k => React.createElement("button", {key: k, className: "ojt-nav-btn" + (activeTab === k ? " active" : ""), onClick: () => { setActiveTab(k); setMobileNavOpen(false); }}, React.createElement("span", { className: "nx-ic" }, {approvals: "✅", admin: "🛡️", friends: "👥", feed: "📰", chat: "💬", profile: "👤"}[k]), {approvals: "Approvals" + (approvalsScoped.length ? " (" + approvalsScoped.length + ")" : ""), admin: isSuper ? "Departments & admins" : "My department", friends: "Friends" + (friendReqCount ? " (" + friendReqCount + ")" : ""), feed: "News feed", chat: "Messages", profile: "Profile"}[k])), /*#__PURE__*/React.createElement("button", {
     className: "ojt-nav-btn" + (activeTab === "ratings" ? " active" : ""),
     onClick: () => {
       setActiveTab("ratings");
       setMobileNavOpen(false);
     }
-  }, "Ratings"), /*#__PURE__*/React.createElement("button", {
+  }, React.createElement("span", { className: "nx-ic" }, "⭐"), "Ratings"), /*#__PURE__*/React.createElement("button", {
     className: "ojt-nav-btn" + (activeTab === "about" ? " active" : ""),
     onClick: () => {
       setActiveTab("about");
       setMobileNavOpen(false);
     }
-  }, "About us")), searchOpen && React.createElement(SearchBar, {
+  }, React.createElement("span", { className: "nx-ic" }, "ℹ️"), "About us")), searchOpen && React.createElement(SearchBar, {
     trainees,
     isOwner,
     onClose: () => setSearchOpen(false),
@@ -4056,8 +4256,8 @@ function App() {
     onClick: toggleNav,
     "aria-expanded": !navHidden,
     title: navHidden ? "Show all menu items" : "Hide the menu"
-  }, navHidden ? "☰ Show menu" : "✕ Hide menu")), isOwner && approvals.length > 0 && activeTab !== "approvals" && React.createElement(ApprovalBanner, {
-    count: approvals.length,
+  }, navHidden ? "☰ Show menu" : "✕ Hide menu"), React.createElement(NxSideProgress, { viewer, trainees, stats: traineeStats, departments })), (viewer || isOwner) && React.createElement(NxRail, { viewer, trainees, friendDocs, departments, isOwner, manages, onOpen: openProfile, onNav: setActiveTab }), isOwner && approvalsScoped.length > 0 && activeTab !== "approvals" && React.createElement(ApprovalBanner, {
+    count: approvalsScoped.length,
     onReview: () => setActiveTab("approvals")
   }), storageError && /*#__PURE__*/React.createElement("p", {
     style: {
@@ -4088,7 +4288,7 @@ function App() {
     style: {
       paddingTop: 26
     }
-  }, activeTab === "about" ? /*#__PURE__*/React.createElement(AboutPage, null) : activeTab === "approvals" && isOwner ? React.createElement(ApprovalsPage, {approvals, trainees, onDecide: decide, onSetSite: setSiteFromRequest}) : activeTab === "feed" ? React.createElement(FeedPage, {viewer, trainees, isOwner}) : activeTab === "chat" ? React.createElement(ChatPage, {viewer, trainees}) : activeTab === "profile" ? React.createElement(ProfilePage, {viewer, trainees, setTrainees, isOwner}) : activeTab === "journal" ? /*#__PURE__*/React.createElement(JournalPage, {
+  }, activeTab === "about" ? /*#__PURE__*/React.createElement(AboutPage, null) : activeTab === "approvals" && isOwner ? React.createElement(ApprovalsPage, {approvals: approvalsScoped, trainees, onDecide: decide, onSetSite: setSiteFromRequest}) : activeTab === "friends" ? React.createElement(FriendsPage, {viewer, trainees, friendDocs, departments, onOpenProfile: openProfile}) : activeTab === "admin" && isOwner ? React.createElement(AdminPage, {adminSession, isSuper, trainees, setTrainees, departments, adminDocs, approvals: approvalsScoped, traineeStats, manages, onOpenTrainee: t => { setSelectedId(t.id); setActiveTab("attendance"); }}) : activeTab === "feed" ? React.createElement(FeedPage, {viewer, trainees, isOwner, canModerate: a => manages((trainees || []).find(t => t.id === a)), friendDocs, onOpenProfile: openProfile}) : activeTab === "chat" ? React.createElement(ChatPage, {viewer, trainees}) : activeTab === "profile" ? React.createElement(ProfilePage, {viewer, trainees, setTrainees, isOwner, friendDocs, focus: profileFocus, stats: traineeStats, departments, canModerate: a => manages((trainees || []).find(t => t.id === a)), onOpenProfile: openProfile}) : activeTab === "journal" ? /*#__PURE__*/React.createElement(JournalPage, {
     isOwner: isOwner,
     viewer: viewer,
     trainees: trainees
@@ -4150,6 +4350,8 @@ function App() {
   }, showAddTrainee && /*#__PURE__*/React.createElement("div", {
     className: "ojt-anim-in"
   }, /*#__PURE__*/React.createElement(TraineeForm, {
+    departments: departments,
+    lockDeployId: isSuper ? null : (adminSession && adminSession.deptId) || null,
     onCancel: () => setShowAddTrainee(false),
     onSave: addTrainee
   })), !selectedTrainee && !showAddTrainee && /*#__PURE__*/React.createElement("div", {
@@ -4192,7 +4394,7 @@ function App() {
       color: "var(--ojt-muted)",
       fontSize: 13.5
     }
-  }, selectedTrainee.studentId && canSeeId(selectedTrainee, viewer, isOwner) ? `ID ${selectedTrainee.studentId} · ` : "", selectedTrainee.department || "No department set", " · target ", selectedTrainee.dailyTarget, " hrs/day"), selectedTrainee.updatedAt && /*#__PURE__*/React.createElement("p", {
+  }, selectedTrainee.studentId && canSeeId(selectedTrainee, viewer, isOwner) ? `ID ${selectedTrainee.studentId} · ` : "", selectedTrainee.department || "No department set", (selectedTrainee.deployId && (departments.find(d => d.id === selectedTrainee.deployId) || {}).name ? " · 📍 " + departments.find(d => d.id === selectedTrainee.deployId).name : ""), " · target ", selectedTrainee.dailyTarget, " hrs/day"), selectedTrainee.updatedAt && /*#__PURE__*/React.createElement("p", {
     className: "ojt-last-updated"
   }, "Last updated ", fmtDateLong(selectedTrainee.updatedAt.slice(0, 10))), /*#__PURE__*/React.createElement("input", {
     ref: quickPhotoInputRef,
@@ -4206,7 +4408,7 @@ function App() {
     className: "ojt-btn ojt-btn-ghost",
     style: {
       padding: "4px 0",
-      display: isOwner ? undefined : "none"
+      display: canAdminSel ? undefined : "none"
     },
     onClick: () => quickPhotoInputRef.current?.click(),
     disabled: quickPhotoBusy
@@ -4222,7 +4424,7 @@ function App() {
       display: "flex",
       gap: 8
     }
-  }, isOwner ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+  }, canAdminSel ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
     onClick: () => {
       setShowEditTrainee(s => !s);
@@ -4248,6 +4450,8 @@ function App() {
       marginTop: 16
     }
   }, /*#__PURE__*/React.createElement(TraineeForm, {
+    departments: departments,
+    lockDeployId: isSuper ? null : (adminSession && adminSession.deptId) || null,
     initial: selectedTrainee,
     onCancel: () => setShowEditTrainee(false),
     onSave: editTrainee
@@ -4348,7 +4552,7 @@ function App() {
   }, "Start " + t.toLowerCase())), React.createElement("button", {
     className: "ojt-btn ojt-btn-danger",
     onClick: clockOut
-  }, "Time out")) : pendingRecord ? isOwner ? React.createElement(InlineApproval, {
+  }, "Time out")) : pendingRecord ? canAdminSel ? React.createElement(InlineApproval, {
     req: approvals.find(x => x.id === pendingRecord.id) || {
       id: pendingRecord.id,
       traineeId: selectedId,
@@ -4365,10 +4569,10 @@ function App() {
   }, "Cancel request") : /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-primary",
     onClick: () => setShowDuty(true)
-  }, "Time in"), showDuty && React.createElement(DutyModal, {needProof: !isOwner, site: selectedTrainee && selectedTrainee.site, onCancel: () => setShowDuty(false), onSubmit: (d, proof) => { setShowDuty(false); clockIn(d, proof); }}), proofView && React.createElement(ProofViewer, {rec: proofView, trainee: selectedTrainee, onClose: () => setProofView(null)}), /*#__PURE__*/React.createElement("button", {
+  }, "Time in"), showDuty && React.createElement(DutyModal, {needProof: !canAdminSel, site: selectedTrainee && selectedTrainee.site, onCancel: () => setShowDuty(false), onSubmit: (d, proof) => { setShowDuty(false); clockIn(d, proof); }}), proofView && React.createElement(ProofViewer, {rec: proofView, trainee: selectedTrainee, onClose: () => setProofView(null)}), /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
     style: {
-      display: isOwner ? undefined : "none"
+      display: canAdminSel ? undefined : "none"
     },
     onClick: () => {
       setShowAddRecord(s => !s);
@@ -4398,11 +4602,11 @@ function App() {
       fontWeight: 600,
       margin: 0
     }
-  }, "Daily time record"), /*#__PURE__*/React.createElement("button", {
+  }, "Daily time record"), (isOwnSel || canAdminSel) ? React.createElement("button", {
     className: "ojt-btn ojt-btn-outline",
     onClick: exportCSV,
     disabled: !records.length
-  }, "Export CSV")), !isOwner && /*#__PURE__*/React.createElement("p", {
+  }, isOwnSel ? "Export my hours (CSV)" : "Export CSV") : React.createElement("span", null)), !canAdminSel && /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: 12,
       color: "var(--ojt-muted)",
@@ -4412,7 +4616,7 @@ function App() {
     className: "ojt-panel",
     style: {
       overflowX: "auto",
-      marginTop: isOwner ? 16 : 0
+      marginTop: canAdminSel ? 16 : 0
     }
   }, loadingRecords ? /*#__PURE__*/React.createElement("p", {
     className: "ojt-loading-row",
@@ -4459,11 +4663,11 @@ function App() {
     style: { fontSize: 12, marginTop: 2, color: "var(--ojt-danger)" }
   }, "✖ Not approved" + (r.approval.reason ? ": " + r.approval.reason : "")), r.approval && r.approval.status === "pending" && React.createElement("div", {
     style: { fontSize: 12, marginTop: 2, color: "var(--ojt-amber)" }
-  }, "⏳ Awaiting approval"), r.approval && r.approval.status === "approved" && r.proof && canSeeId(selectedTrainee, viewer, isOwner) && React.createElement("button", {
+  }, "⏳ Awaiting approval"), r.approval && r.approval.status === "approved" && r.proof && canSeeId(selectedTrainee, viewer, canAdminSel) && React.createElement("button", {
     className: "ojt-btn ojt-btn-ghost",
     style: { padding: "2px 0", minHeight: 0, fontSize: 12 },
     onClick: () => setProofView(r)
-  }, "📍 On-site proof")), /*#__PURE__*/React.createElement("td", null, isOwner ? /*#__PURE__*/React.createElement("div", {
+  }, "📍 On-site proof")), /*#__PURE__*/React.createElement("td", null, canAdminSel ? /*#__PURE__*/React.createElement("div", {
     className: "ojt-row-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "ojt-btn ojt-btn-ghost",
@@ -4519,7 +4723,7 @@ function App() {
 @media(min-width:861px){.nx-search-pill,.nx-searchbar{display:none!important}}
 .nx-step{border:1px solid var(--ojt-border);border-radius:12px;padding:10px 12px;margin:10px 0}
 .nx-ok{color:var(--ojt-ok);font-weight:600;margin:6px 0}
-.nx-cam{width:100%;max-height:260px;object-fit:cover;border-radius:12px;background:#000;transform:scaleX(-1)}
+.nx-cam{width:100%;max-height:320px;object-fit:contain;border-radius:12px;background:#000;transform:none}
 .nx-menu-toggle{margin-left:auto;align-self:center;border:1px solid var(--ojt-outline-border);background:var(--ojt-panel);color:var(--ojt-fg);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;white-space:nowrap}
 .nx-menu-toggle:hover{background:var(--ojt-hover)}
 @media(min-width:561px){.ojt-nav.nx-nav-hidden .ojt-nav-links{display:none!important}}
@@ -4534,6 +4738,10 @@ function DutyModal({ onSubmit, onCancel, needProof, site }) {
   const [v, setV] = useState(""), [loc, setLoc] = useState(null), [locErr, setLocErr] = useState(""), [locBusy, setLocBusy] = useState(false);
   const [photo, setPhoto] = useState(null), [camErr, setCamErr] = useState(""), [live, setLive] = useState(false);
   const vid = useRef(null), stream = useRef(null);
+  /* Some phones/browsers hand over an already-mirrored front camera. This switch fixes it and is remembered. */
+  const [camFlip, setCamFlip] = useState(() => { try { return window.localStorage.getItem("ojt-cam-flip") === "1"; } catch { return false; } });
+  const toggleCamFlip = () => setCamFlip(f => { const n = !f; try { window.localStorage.setItem("ojt-cam-flip", n ? "1" : "0"); } catch { /* not remembered */ } return n; });
+  const flipPhoto = () => { const img = new Image(); img.onload = () => { const c = document.createElement("canvas"); c.width = img.width; c.height = img.height; const x = c.getContext("2d"); x.translate(c.width, 0); x.scale(-1, 1); x.drawImage(img, 0, 0); setPhoto(c.toDataURL("image/jpeg", 0.6)); }; img.src = photo; };
   const chips = ["On-field duty", "Office / desk work", "Client visit", "Training / seminar"];
   const getLoc = () => {
     if (!navigator.geolocation) { setLocErr("This device can't share its location."); return; }
@@ -4562,6 +4770,8 @@ function DutyModal({ onSubmit, onCancel, needProof, site }) {
     const w = el.videoWidth || 480, h = el.videoHeight || 360, sc = Math.min(1, 480 / w);
     const c = document.createElement("canvas"); c.width = Math.round(w * sc); c.height = Math.round(h * sc);
     const ctx = c.getContext("2d"); if (!ctx) { setCamErr("Couldn't capture the photo. Try again."); return; }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (camFlip) { ctx.translate(c.width, 0); ctx.scale(-1, 1); } /* only when you switched Flip on */
     ctx.drawImage(el, 0, 0, c.width, c.height); setPhoto(c.toDataURL("image/jpeg", 0.6)); stopCam();
   };
   const pickFile = async e => { const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return; try { setPhoto(await resizeImage(f, 480)); setCamErr(""); } catch { setCamErr("Couldn't read that photo."); } };
@@ -4580,11 +4790,11 @@ function DutyModal({ onSubmit, onCancel, needProof, site }) {
       locErr && nxh("p", { style: { color: "var(--ojt-danger)", fontSize: 13, margin: "4px 0" } }, locErr),
       !locBusy && (locErr || loc) && nxh("button", { type: "button", className: "ojt-btn ojt-btn-ghost", onClick: getLoc }, locErr ? "Try again" : "Refresh location")),
     needProof && nxh("div", { className: "nx-step" }, nxh("strong", null, "2. Selfie at your work site"),
-      live && nxh("div", null, nxh("video", { ref: vid, className: "nx-cam", playsInline: true, muted: true, autoPlay: true }), nxh("button", { type: "button", className: "ojt-btn ojt-btn-primary", style: { marginTop: 8 }, onClick: snap }, "Take photo")),
-      photo && nxh("div", null, nxh("img", { className: "nx-media", src: photo, alt: "Your selfie", style: { maxHeight: 220 } }), nxh("button", { type: "button", className: "ojt-btn ojt-btn-ghost", onClick: startCam }, "Retake")),
+      live && nxh("div", null, nxh("video", { ref: vid, className: "nx-cam", playsInline: true, muted: true, autoPlay: true, style: { transform: camFlip ? "scaleX(-1)" : "none" } }), nxh("div", { style: { display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" } }, nxh("button", { type: "button", className: "ojt-btn ojt-btn-primary", onClick: snap }, "Take photo"), nxh("button", { type: "button", className: "ojt-btn ojt-btn-outline", onClick: toggleCamFlip }, "↔ Flip view")), nxh("p", { className: "nx-sub", style: { margin: "6px 0 0" } }, "If the picture looks mirrored (writing is backwards), tap Flip view. The photo is saved exactly as you see it.")),
+      photo && nxh("div", null, nxh("img", { className: "nx-media", src: photo, alt: "Your selfie", style: { maxHeight: 220 } }), nxh("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, nxh("button", { type: "button", className: "ojt-btn ojt-btn-ghost", onClick: startCam }, "Retake"), nxh("button", { type: "button", className: "ojt-btn ojt-btn-outline", onClick: flipPhoto }, "↔ Flip photo"))),
       !live && !photo && nxh("button", { type: "button", className: "ojt-btn ojt-btn-outline", onClick: startCam }, "Open camera"),
       camErr && nxh("p", { style: { color: "var(--ojt-danger)", fontSize: 13, margin: "6px 0" } }, camErr),
-      !live && !photo && nxh("label", { className: "ojt-btn ojt-btn-ghost", style: { cursor: "pointer" } }, "Choose a photo instead", nxh("input", { type: "file", accept: "image/*", capture: "user", hidden: true, onChange: pickFile }))),
+      !live && !photo && nxh("label", { className: "ojt-btn ojt-btn-ghost", style: { cursor: "pointer" } }, "Choose a photo instead (phone camera)", nxh("input", { type: "file", accept: "image/*", capture: "user", hidden: true, onChange: pickFile }))),
     nxh("div", { className: "ojt-composer-bar" }, nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: onCancel }, "Cancel"),
       nxh("button", { className: "ojt-btn ojt-btn-primary", disabled: !ready, onClick: () => onSubmit(v.trim(), needProof ? { ...loc, photo } : null) }, needProof ? "Send for approval" : "Time in"))));
 }
@@ -4654,52 +4864,334 @@ function ProofViewer({ rec, trainee, onClose }) {
 }
 const readDataUrl=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)});
 function NxMedia({m}){if(!m)return null;return m.type==="video"?nxh("video",{className:"nx-media",src:m.src,controls:true}):nxh("img",{className:"nx-media",src:m.src,alt:"Post photo"})}
-function FeedPage({viewer,trainees,isOwner}){
-  const [posts,setPosts]=useState(null),[err,setErr]=useState(""),[text,setText]=useState(""),[media,setMedia]=useState(null),[busy,setBusy]=useState(false),[open,setOpen]=useState({}),[cm,setCm]=useState({}),[del,setDel]=useState(null),[limit,setLimit]=useState(10);
-  useLiveCollection("posts",setPosts,setErr);
-  const byId=useMemo(()=>Object.fromEntries((trainees||[]).map(t=>[t.id,t])),[trainees]);
-  const me=viewer?byId[viewer.id]:null;
-  const save=p=>saveDoc("posts",p,setErr);
-  const pick=async e=>{const f=e.target.files?.[0];e.target.value="";if(!f)return;setErr("");
-    try{if(f.type.startsWith("image/"))setMedia({type:"image",src:await resizeImage(f,900)});
-      else if(f.type.startsWith("video/")){if(f.size>3e6)return setErr("Video too big — keep it under 3 MB.");setMedia({type:"video",src:await readDataUrl(f)})}
-      else setErr("Choose a photo or video.")}catch{setErr("Couldn't read that file.")}};
-  const publish=async()=>{if(!viewer||(!text.trim()&&!media))return;setBusy(true);
-    if(await save({id:uid(),authorId:viewer.id,authorName:viewer.name,text:text.trim().slice(0,2000),media,createdAt:nowISO(),likes:[],comments:[]})){setText("");setMedia(null)}setBusy(false)};
-  const like=p=>{if(!viewer)return;const l=p.likes||[];save({...p,likes:l.includes(viewer.id)?l.filter(x=>x!==viewer.id):[...l,viewer.id]})};
-  const comment=p=>{const t=(cm[p.id]||"").trim();if(!t||!viewer)return;save({...p,comments:[...(p.comments||[]),{id:uid(),authorId:viewer.id,authorName:viewer.name,text:t.slice(0,500),createdAt:nowISO()}]});setCm(c=>({...c,[p.id]:""}))};
-  const share=async p=>{if(!viewer)return;const src=p.shared||{authorName:p.authorName,text:p.text,media:p.media};
-    if(await save({id:uid(),authorId:viewer.id,authorName:viewer.name,text:"",media:null,shared:src,createdAt:nowISO(),likes:[],comments:[]}))save({...p,shares:(p.shares||0)+1})};
-  if(posts===null)return nxh("p",{className:"ojt-loading-row"},nxh("span",{className:"ojt-spinner"})," Loading…");
-  const list=[...posts].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
-  return nxh("div",{className:"ojt-main-content ojt-page",style:{maxWidth:640,margin:"0 auto"}},
-    nxh("p",{className:"disp",style:{fontSize:24,fontWeight:600,margin:"0 0 12px"}},"News feed"),
-    viewer?nxh("div",{className:"ojt-panel ojt-composer"},
-      nxh("div",{className:"ojt-post-head"},nxh(PersonAvatar,{t:me,name:viewer.name}),nxh("strong",null,viewer.name)),
-      nxh("textarea",{className:"ojt-input",rows:3,maxLength:2000,value:text,onChange:e=>setText(e.target.value),placeholder:"What's on your mind?"}),
-      media&&nxh("div",null,nxh(NxMedia,{m:media}),nxh("button",{className:"ojt-btn ojt-btn-ghost",onClick:()=>setMedia(null)},"Remove")),
-      nxh("div",{className:"ojt-composer-bar"},nxh("label",{className:"ojt-btn ojt-btn-outline",style:{cursor:"pointer"}},"📷 Photo / video",nxh("input",{type:"file",accept:"image/*,video/*",hidden:true,onChange:pick})),
-        nxh("button",{className:"ojt-btn ojt-btn-primary",disabled:busy||(!text.trim()&&!media),onClick:publish},busy?"Posting…":"Post"))):
-      nxh("p",{className:"nx-sub"},"Sign in with your student account to post, like, comment and share."),
-    err&&nxh("p",{style:{color:"var(--ojt-danger)",fontSize:13}},err),
-    list.length===0?nxh("div",{className:"ojt-empty ojt-panel"},nxh("p",{className:"disp"},"No posts yet"),nxh("p",null,"Be the first to share something.")):
-    list.slice(0,limit).map(p=>{const a=byId[p.authorId],liked=viewer&&(p.likes||[]).includes(viewer.id),cs=p.comments||[];
-      return nxh("div",{key:p.id,className:"ojt-panel ojt-post"},
-        nxh("div",{className:"ojt-post-head"},nxh(PersonAvatar,{t:a,name:p.authorName}),
-          nxh("div",{style:{flex:1,minWidth:0}},nxh("strong",null,a?a.name:p.authorName),p.shared&&" shared a post",nxh("div",{className:"ojt-post-meta mono"},fmtStamp(p.createdAt))),
-          ((viewer&&viewer.id===p.authorId)||isOwner)&&nxh("button",{className:"ojt-btn ojt-btn-ghost",onClick:()=>setDel(p.id)},"Delete")),
-        p.text&&nxh("p",{className:"ojt-post-body"},p.text),nxh(NxMedia,{m:p.media}),
-        p.shared&&nxh("div",{className:"nx-share"},nxh("strong",null,p.shared.authorName),p.shared.text&&nxh("p",{className:"ojt-post-body"},p.shared.text),nxh(NxMedia,{m:p.shared.media})),
-        nxh("div",{className:"ojt-post-meta mono",style:{marginTop:8}},(p.likes||[]).length," likes · ",cs.length," comments · ",p.shares||0," shares"),
-        nxh("div",{className:"nx-acts"},
-          nxh("button",{className:"ojt-btn ojt-btn-ghost",disabled:!viewer,onClick:()=>like(p),style:liked?{color:"var(--ojt-accent-dark)",fontWeight:700}:null},liked?"👍 Liked":"👍 Like"),
-          nxh("button",{className:"ojt-btn ojt-btn-ghost",onClick:()=>setOpen(o=>({...o,[p.id]:!o[p.id]}))},"💬 Comment"),
-          nxh("button",{className:"ojt-btn ojt-btn-ghost",disabled:!viewer,onClick:()=>share(p)},"↗ Share")),
-        open[p.id]&&nxh("div",null,cs.map(c=>nxh("div",{key:c.id,className:"nx-cm"},nxh(PersonAvatar,{t:byId[c.authorId],name:c.authorName}),nxh("div",null,nxh("b",null,c.authorName)," ",c.text))),
-          viewer&&nxh("div",{className:"nx-cm"},nxh("input",{className:"ojt-input",placeholder:"Write a comment…",value:cm[p.id]||"",onChange:e=>setCm(x=>({...x,[p.id]:e.target.value})),onKeyDown:e=>e.key==="Enter"&&comment(p)}),nxh("button",{className:"ojt-btn ojt-btn-primary",onClick:()=>comment(p)},"Send"))))}),
-    list.length>limit&&nxh("button",{className:"ojt-btn ojt-btn-outline",style:{display:"block",margin:"6px auto"},onClick:()=>setLimit(l=>l+10)},"Show more"),
-    del&&nxh(ConfirmModal,{title:"Delete this post?",message:"This post will be permanently removed.",onConfirm:()=>{removeDoc("posts",del,setErr);setDel(null)},onCancel:()=>setDel(null)}));
+/* ===== Social layer: friends, post privacy, profile timeline, departments & admins ===== */
+let NX_DUTY = new Set();
+const nxPair = (a, b) => [a, b].sort().join("_");
+const nxFriendSet = (docs, id) => new Set((docs || []).filter(f => f.status === "accepted" && (f.a === id || f.b === id)).map(f => f.a === id ? f.b : f.a));
+const nxFriendState = (docs, me, other) => {
+  const f = (docs || []).find(x => x.id === nxPair(me, other));
+  if (!f) return "none";
+  if (f.status === "accepted") return "friends";
+  return f.from === me ? "sent" : "received";
+};
+/* Old posts have no privacy field, so they stay public. Admins can see everything they moderate. */
+const nxVisible = (p, viewer, fs, canMod) => {
+  if ((p.privacy || "public") === "public") return true;
+  if (canMod && canMod(p.authorId)) return true;
+  return !!viewer && (p.authorId === viewer.id || fs.has(p.authorId));
+};
+const nxFriendActions = (viewer, docs, setErr) => ({
+  add: o => { const s = [viewer.id, o].sort(); return saveDoc("friends", { id: nxPair(viewer.id, o), a: s[0], b: s[1], from: viewer.id, status: "pending", createdAt: nowISO() }, setErr); },
+  accept: o => { const f = (docs || []).find(x => x.id === nxPair(viewer.id, o)); return f ? saveDoc("friends", { ...f, status: "accepted", acceptedAt: nowISO() }, setErr) : null; },
+  remove: o => removeDoc("friends", nxPair(viewer.id, o), setErr)
+});
+const NX_AUD = [["friends", "👥 Friends only"], ["public", "🌐 Public"]];
+const nxAudLabel = v => v === "public" ? "🌐 Public" : "👥 Friends only";
+function NxAudSelect({ value, onChange, label }) {
+  return nxh("select", { className: "ojt-select nx-aud", "aria-label": label || "Who can see this", value, onChange: e => onChange(e.target.value) }, NX_AUD.map(o => nxh("option", { key: o[0], value: o[0] }, o[1])));
 }
+function NxDutyChip() { return nxh("span", { className: "nx-duty-chip" }, "On duty now"); }
+
+function PostCard({ p, byId, viewer, canMod, save, onShare, onDelete, onOpenProfile }) {
+  const [open, setOpen] = useState(false), [c, setC] = useState("");
+  const a = byId[p.authorId], mine = !!viewer && viewer.id === p.authorId, pub = (p.privacy || "public") === "public";
+  const liked = !!viewer && (p.likes || []).includes(viewer.id), cs = p.comments || [];
+  const like = () => { if (!viewer) return; const l = p.likes || []; save({ ...p, likes: liked ? l.filter(x => x !== viewer.id) : [...l, viewer.id] }); };
+  const comment = () => { const t = c.trim(); if (!t || !viewer) return; save({ ...p, comments: [...cs, { id: uid(), authorId: viewer.id, authorName: viewer.name, text: t.slice(0, 500), createdAt: nowISO() }] }); setC(""); };
+  return nxh("div", { className: "ojt-panel ojt-post" },
+    nxh("div", { className: "ojt-post-head" }, nxh(PersonAvatar, { t: a, name: p.authorName }),
+      nxh("div", { style: { flex: 1, minWidth: 0 } },
+        nxh("button", { className: "nx-name", onClick: () => onOpenProfile && a && onOpenProfile(a.id) }, a ? a.name : p.authorName), p.shared && " shared a post",
+        nxh("div", { className: "ojt-post-meta nx-meta" }, nxh("span", null, fmtStamp(p.createdAt)), mine ? nxh(NxAudSelect, { value: p.privacy || "public", label: "Change who can see this post", onChange: v => save({ ...p, privacy: v }) }) : nxh("span", null, nxAudLabel(p.privacy || "public")))),
+      (mine || (canMod && canMod(p.authorId))) && nxh("button", { className: "ojt-btn ojt-btn-ghost", onClick: () => onDelete(p.id) }, "Delete")),
+    p.text && nxh("p", { className: "ojt-post-body" }, p.text), nxh(NxMedia, { m: p.media }),
+    p.shared && nxh("div", { className: "nx-share" }, nxh("strong", null, p.shared.authorName), p.shared.text && nxh("p", { className: "ojt-post-body" }, p.shared.text), nxh(NxMedia, { m: p.shared.media })),
+    nxh("div", { className: "ojt-post-meta", style: { marginTop: 8 } }, (p.likes || []).length + " likes · " + cs.length + " comments · " + (p.shares || 0) + " shares"),
+    nxh("div", { className: "nx-acts" },
+      nxh("button", { className: "ojt-btn ojt-btn-ghost", disabled: !viewer, onClick: like, style: liked ? { color: "var(--ojt-accent)", fontWeight: 700 } : null }, liked ? "👍 Liked" : "👍 Like"),
+      nxh("button", { className: "ojt-btn ojt-btn-ghost", onClick: () => setOpen(o => !o) }, "💬 Comment"),
+      pub ? nxh("button", { className: "ojt-btn ojt-btn-ghost", disabled: !viewer, onClick: () => onShare(p) }, "↗ Share to profile") : nxh("span", { className: "nx-sub", style: { alignSelf: "center", margin: 0 } }, "Friends-only posts can't be shared")),
+    open && nxh("div", null, cs.map(x => nxh("div", { key: x.id, className: "nx-cm" }, nxh(PersonAvatar, { t: byId[x.authorId], name: x.authorName }), nxh("div", null, nxh("b", null, x.authorName), " ", x.text))),
+      viewer && nxh("div", { className: "nx-cm" }, nxh("input", { className: "ojt-input", placeholder: "Write a comment…", value: c, onChange: e => setC(e.target.value), onKeyDown: e => e.key === "Enter" && comment() }), nxh("button", { className: "ojt-btn ojt-btn-primary", onClick: comment }, "Send"))));
+}
+
+function PostList({ posts, byId, viewer, canMod, onOpenProfile, setErr, empty }) {
+  const [limit, setLimit] = useState(10), [del, setDel] = useState(null), [sh, setSh] = useState(null), [shAud, setShAud] = useState("friends"), [busy, setBusy] = useState(false);
+  const save = p => saveDoc("posts", p, setErr);
+  const doShare = async () => {
+    if (!sh || !viewer) return;
+    setBusy(true);
+    const src = sh.shared || { authorName: sh.authorName, text: sh.text, media: sh.media };
+    /* A share lives on the sharer's profile only; the news feed skips anything with kind "share". */
+    if (await save({ id: uid(), authorId: viewer.id, authorName: viewer.name, text: "", media: null, shared: src, kind: "share", privacy: shAud, createdAt: nowISO(), likes: [], comments: [] })) save({ ...sh, shares: (sh.shares || 0) + 1 });
+    setBusy(false); setSh(null);
+  };
+  const list = [...posts].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return nxh(React.Fragment, null,
+    list.length === 0 ? empty : list.slice(0, limit).map(p => nxh(PostCard, { key: p.id, p, byId, viewer, canMod, save, onShare: setSh, onDelete: setDel, onOpenProfile })),
+    list.length > limit && nxh("button", { className: "ojt-btn ojt-btn-outline", style: { display: "block", margin: "6px auto" }, onClick: () => setLimit(l => l + 10) }, "Show more"),
+    sh && nxh("div", { className: "nx-overlay", onClick: () => setSh(null) }, nxh("div", { className: "nx-modal", role: "dialog", "aria-label": "Share to your profile", onClick: e => e.stopPropagation() },
+      nxh("h3", { className: "disp" }, "Share to your profile"),
+      nxh("p", { className: "nx-sub" }, "This goes on your profile, not the news feed."),
+      nxh("div", { className: "nx-share" }, nxh("strong", null, (sh.shared || sh).authorName), (sh.shared || sh).text && nxh("p", { className: "ojt-post-body" }, (sh.shared || sh).text), nxh(NxMedia, { m: (sh.shared || sh).media })),
+      nxh("div", { className: "nx-f" }, "Who can see it", nxh(NxAudSelect, { value: shAud, onChange: setShAud })),
+      nxh("div", { className: "ojt-composer-bar" }, nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: () => setSh(null) }, "Cancel"), nxh("button", { className: "ojt-btn ojt-btn-primary", disabled: busy, onClick: doShare }, busy ? "Sharing…" : "Share")))),
+    del && nxh(ConfirmModal, { title: "Delete this post?", message: "This post will be permanently removed.", onConfirm: () => { removeDoc("posts", del, setErr); setDel(null); }, onCancel: () => setDel(null) }));
+}
+
+function FeedPage({ viewer, trainees, isOwner, canModerate, friendDocs, onOpenProfile }) {
+  const [posts, setPosts] = useState(null), [err, setErr] = useState(""), [text, setText] = useState(""), [media, setMedia] = useState(null), [busy, setBusy] = useState(false), [aud, setAud] = useState("friends");
+  useLiveCollection("posts", setPosts, setErr);
+  const byId = useMemo(() => Object.fromEntries((trainees || []).map(t => [t.id, t])), [trainees]);
+  const fs = useMemo(() => nxFriendSet(friendDocs, viewer ? viewer.id : ""), [friendDocs, viewer]);
+  const me = viewer ? byId[viewer.id] : null;
+  const pick = async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return; setErr("");
+    try {
+      if (f.type.startsWith("image/")) setMedia({ type: "image", src: await resizeImage(f, 900) });
+      else if (f.type.startsWith("video/")) { if (f.size > 3e6) return setErr("Video too big — keep it under 3 MB."); setMedia({ type: "video", src: await readDataUrl(f) }); }
+      else setErr("Choose a photo or video.");
+    } catch { setErr("Couldn't read that file."); }
+  };
+  const publish = async () => {
+    if (!viewer || (!text.trim() && !media)) return; setBusy(true);
+    if (await saveDoc("posts", { id: uid(), authorId: viewer.id, authorName: viewer.name, text: text.trim().slice(0, 2000), media, kind: "post", privacy: aud, createdAt: nowISO(), likes: [], comments: [] }, setErr)) { setText(""); setMedia(null); }
+    setBusy(false);
+  };
+  if (posts === null) return nxh("p", { className: "ojt-loading-row" }, nxh("span", { className: "ojt-spinner" }), " Loading…");
+  const vis = posts.filter(p => !p.shared && p.kind !== "share" && nxVisible(p, viewer, fs, canModerate));
+  const duty = [...NX_DUTY].map(id => byId[id]).filter(Boolean);
+  return nxh("div", { className: "ojt-main-content ojt-page nx-col" },
+    duty.length > 0 && nxh("div", { className: "ojt-panel nx-duty-box" }, nxh("strong", null, "On duty now"),
+      nxh("div", { className: "nx-duty-row" }, duty.map(t => nxh("button", { key: t.id, className: "nx-story", onClick: () => onOpenProfile && onOpenProfile(t.id) }, nxh(PersonAvatar, { t, name: t.name }), nxh("span", null, (t.nickname || t.name || "").split(" ")[0]))))),
+    viewer ? nxh("div", { className: "ojt-panel ojt-composer" },
+      nxh("div", { className: "ojt-post-head" }, nxh(PersonAvatar, { t: me, name: viewer.name }), nxh("strong", null, viewer.name)),
+      nxh("textarea", { className: "ojt-input", rows: 3, maxLength: 2000, value: text, onChange: e => setText(e.target.value), placeholder: "What's on your mind, " + (viewer.name || "").split(" ")[0] + "?" }),
+      media && nxh("div", null, nxh(NxMedia, { m: media }), nxh("button", { className: "ojt-btn ojt-btn-ghost", onClick: () => setMedia(null) }, "Remove")),
+      nxh("div", { className: "ojt-composer-bar" },
+        nxh("div", { style: { display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" } }, nxh("label", { className: "ojt-btn ojt-btn-outline", style: { cursor: "pointer" } }, "📷 Photo / video", nxh("input", { type: "file", accept: "image/*,video/*", hidden: true, onChange: pick })), nxh(NxAudSelect, { value: aud, onChange: setAud, label: "Who can see this post" })),
+        nxh("button", { className: "ojt-btn ojt-btn-primary", disabled: busy || (!text.trim() && !media), onClick: publish }, busy ? "Posting…" : "Post"))) :
+      nxh("p", { className: "nx-sub" }, "Sign in with your student account to post, like, comment and share."),
+    err && nxh("p", { style: { color: "var(--ojt-danger)", fontSize: 13 } }, err),
+    nxh(PostList, { posts: vis, byId, viewer, canMod: canModerate, onOpenProfile, setErr, empty: nxh("div", { className: "ojt-empty ojt-panel" }, nxh("p", { className: "disp" }, "Nothing here yet"), nxh("p", null, "Posts from you and your friends will show up here. Add friends from the Friends tab.")) }));
+}
+
+function FriendsPage({ viewer, trainees, friendDocs, departments, onOpenProfile }) {
+  const [tab, setTab] = useState("friends"), [q, setQ] = useState(""), [err, setErr] = useState("");
+  if (!viewer) return nxh("div", { className: "ojt-main-content ojt-page nx-col" }, nxh("p", { className: "disp", style: { fontSize: 24, fontWeight: 600 } }, "Friends"), nxh("p", { className: "nx-sub" }, "Sign in with your student account to add friends."));
+  const me = viewer.id, act = nxFriendActions(viewer, friendDocs, setErr);
+  const byId = Object.fromEntries((trainees || []).map(t => [t.id, t]));
+  const rel = (friendDocs || []).filter(f => f.a === me || f.b === me), oth = f => f.a === me ? f.b : f.a;
+  const people = ids => ids.map(id => byId[id]).filter(Boolean);
+  const incoming = people(rel.filter(f => f.status === "pending" && f.from !== me).map(oth));
+  const sent = people(rel.filter(f => f.status === "pending" && f.from === me).map(oth));
+  const friends = people(rel.filter(f => f.status === "accepted").map(oth)).sort((a, b) => (NX_DUTY.has(b.id) ? 1 : 0) - (NX_DUTY.has(a.id) ? 1 : 0) || a.name.localeCompare(b.name));
+  const k = q.trim().toLowerCase();
+  const find = (trainees || []).filter(t => t.id !== me && (!k || (t.name || "").toLowerCase().includes(k) || (t.nickname || "").toLowerCase().includes(k)));
+  const dn = t => (departments.find(d => d.id === t.deployId) || {}).name;
+  const card = (t, btns) => nxh("div", { key: t.id, className: "ojt-panel nx-fcard" },
+    nxh("button", { className: "nx-fphoto", onClick: () => onOpenProfile(t.id), "aria-label": "Open " + t.name + "'s profile" }, nxh(PersonAvatar, { t, name: t.name, large: true })),
+    nxh("button", { className: "nx-name", onClick: () => onOpenProfile(t.id) }, t.name),
+    nxh("div", { className: "nx-sub", style: { margin: "2px 0 8px" } }, [t.department, dn(t) ? "📍 " + dn(t) : null].filter(Boolean).join(" · ") || " "),
+    NX_DUTY.has(t.id) && nxh(NxDutyChip),
+    nxh("div", { className: "nx-facts" }, btns));
+  const btn = (label, fn, cls) => nxh("button", { key: label, className: "ojt-btn " + (cls || "ojt-btn-outline"), onClick: fn }, label);
+  const stateBtns = t => { const s = nxFriendState(friendDocs, me, t.id); return s === "friends" ? btn("Unfriend", () => act.remove(t.id)) : s === "sent" ? btn("Cancel request", () => act.remove(t.id)) : s === "received" ? [btn("Confirm", () => act.accept(t.id), "ojt-btn-primary"), btn("Delete", () => act.remove(t.id))] : btn("Add friend", () => act.add(t.id), "ojt-btn-primary"); };
+  const tabs = [["friends", "All friends (" + friends.length + ")"], ["requests", "Requests (" + incoming.length + ")"], ["sent", "Sent (" + sent.length + ")"], ["find", "Find people"]];
+  const shown = tab === "friends" ? friends : tab === "requests" ? incoming : tab === "sent" ? sent : find;
+  return nxh("div", { className: "ojt-main-content ojt-page nx-col nx-wide" },
+    nxh("p", { className: "disp", style: { fontSize: 24, fontWeight: 600, margin: "0 0 12px" } }, "Friends"),
+    nxh("div", { className: "nx-chips" }, tabs.map(x => nxh("button", { key: x[0], className: "nx-chip" + (tab === x[0] ? " on" : ""), onClick: () => setTab(x[0]) }, x[1]))),
+    tab === "find" && nxh("input", { className: "ojt-input", placeholder: "Search by name…", value: q, onChange: e => setQ(e.target.value), style: { marginBottom: 12 } }),
+    err && nxh("p", { style: { color: "var(--ojt-danger)", fontSize: 13 } }, err),
+    shown.length === 0 ? nxh("div", { className: "ojt-empty ojt-panel" }, nxh("p", { className: "disp" }, tab === "friends" ? "No friends yet" : tab === "requests" ? "No requests" : tab === "sent" ? "No pending requests" : "No one found"), nxh("p", null, tab === "friends" ? "Use Find people to add classmates. Only friends can see your friends-only posts." : "")) :
+      nxh("div", { className: "nx-fgrid" }, shown.map(t => card(t, stateBtns(t)))));
+}
+
+const NX_COVERS = ["#1877F2", "#42B72A", "#F5B301", "#FF5630", "#6554C0", "#172B4D"];
+const NX_MILES = [[25, "Quarter way", "🌱"], [50, "Halfway there", "🔥"], [75, "Home stretch", "🚀"], [100, "OJT complete", "🏆"]];
+function ProfilePage({ viewer, trainees, setTrainees, isOwner, friendDocs, focus, stats, departments, canModerate, onOpenProfile }) {
+  const [sel, setSel] = useState(viewer ? viewer.id : null), [edit, setEdit] = useState(false), [f, setF] = useState({}), [msg, setMsg] = useState("");
+  const [posts, setPosts] = useState([]), [coverSrc, setCoverSrc] = useState(null), [coverBusy, setCoverBusy] = useState(false);
+  const list = trainees || [], t = list.find(x => x.id === sel) || list[0];
+  const tid = t ? t.id : null;
+  useLiveCollection("posts", setPosts, setMsg);
+  useEffect(() => { if (focus && focus.id) { setSel(focus.id); setEdit(false); setMsg(""); } }, [focus]);
+  useEffect(() => {
+    let dead = false; setCoverSrc(null);
+    if (!tid) return;
+    (async () => { try { const db = await getDb(); const d = await db.collection("covers").doc(tid).get(); if (!dead && d.exists) setCoverSrc(d.data().src || null); } catch { /* cover is optional */ } })();
+    return () => { dead = true; };
+  }, [tid]);
+  const fs = useMemo(() => nxFriendSet(friendDocs, viewer ? viewer.id : ""), [friendDocs, viewer]);
+  if (!t) return nxh("p", { className: "nx-sub" }, "No profiles yet.");
+  const mine = !!viewer && t.id === viewer.id;
+  const byId = Object.fromEntries(list.map(x => [x.id, x]));
+  const set = k => e => setF(x => ({ ...x, [k]: e.target.value }));
+  const start = () => { setF({ nickname: t.nickname || "", bio: t.bio || "", department: t.department || "", hometown: t.hometown || "", skills: t.skills || "", hobbies: t.hobbies || "", cover: t.cover || NX_COVERS[0], photo: t.photo || null }); setEdit(true); };
+  const photo = async e => { const file = e.target.files && e.target.files[0]; e.target.value = ""; if (!file) return; try { const p = await resizeImage(file, 400); setF(x => ({ ...x, photo: p })); } catch { setMsg("Couldn't read that photo."); } };
+  const upCover = async e => {
+    const file = e.target.files && e.target.files[0]; e.target.value = ""; if (!file || !mine) return;
+    setCoverBusy(true); setMsg("");
+    try { const src = await resizeImage(file, 1000); const db = await getDb(); await db.collection("covers").doc(t.id).set({ id: t.id, src }); setCoverSrc(src); setMsg("Cover photo updated."); }
+    catch (er) { setMsg(er && er.code ? dbErrorMessage(er) : "Couldn't use that image. Try a different photo."); }
+    setCoverBusy(false);
+  };
+  const delCover = async () => { try { const db = await getDb(); await db.collection("covers").doc(t.id).delete(); setCoverSrc(null); } catch (er) { setMsg(dbErrorMessage(er)); } };
+  const save = async () => { const u = { ...t, ...f, updatedAt: nowISO() }; setTrainees(l => (l || []).map(x => x.id === u.id ? u : x)); setEdit(false); try { const db = await getDb(); await db.collection("trainees").doc(u.id).set(u); setMsg("Profile saved."); } catch (e) { setMsg(dbErrorMessage(e)); } };
+  const row = (l, v) => v ? nxh("p", { style: { margin: "4px 0", fontSize: 14 } }, nxh("b", null, l + ": "), v) : null;
+  const fld = (l, k, ta) => nxh("label", { className: "nx-f" }, l, nxh(ta ? "textarea" : "input", { className: "ojt-input", rows: 3, maxLength: ta ? 300 : 80, value: f[k] || "", onChange: set(k) }));
+  const cur = edit ? { ...t, ...f } : t;
+  const dep = (departments || []).find(d => d.id === cur.deployId);
+  const st = stats ? stats(cur) : null, pct = st && cur.requiredHours ? Math.min(100, st.total / cur.requiredHours * 100) : null;
+  const fstate = viewer && !mine ? nxFriendState(friendDocs, viewer.id, t.id) : null, act = viewer ? nxFriendActions(viewer, friendDocs, setMsg) : null;
+  const theirs = posts.filter(p => p.authorId === t.id && nxVisible(p, viewer, fs, canModerate));
+  const coverStyle = coverSrc ? { backgroundImage: "url(" + coverSrc + ")", backgroundSize: "cover", backgroundPosition: "center" } : { background: cur.cover || NX_COVERS[0] };
+  return nxh("div", { className: "ojt-main-content ojt-page nx-col" },
+    nxh("p", { className: "disp", style: { fontSize: 24, fontWeight: 600, margin: "0 0 12px" } }, mine ? "My profile" : "Profile"),
+    nxh("div", { className: "ojt-panel", style: { padding: 0, overflow: "hidden" } },
+      nxh("div", { className: "nx-cover", style: coverStyle },
+        mine && nxh("div", { className: "nx-cover-tools" }, nxh("label", { className: "ojt-btn ojt-btn-outline nx-cover-btn" }, coverBusy ? "Uploading…" : "📷 " + (coverSrc ? "Change cover photo" : "Add cover photo"), nxh("input", { type: "file", accept: "image/*", hidden: true, disabled: coverBusy, onChange: upCover })), coverSrc && nxh("button", { className: "ojt-btn ojt-btn-outline nx-cover-btn", onClick: delCover }, "Remove"))),
+      nxh("div", { className: "nx-prof" }, nxh(PersonAvatar, { t: cur, large: true }),
+        nxh("h3", { className: "disp", style: { margin: "8px 0 0", fontSize: 22 } }, cur.name, cur.nickname && nxh("span", { style: { fontWeight: 400, color: "var(--ojt-muted)" } }, " “" + cur.nickname + "”")),
+        nxh("p", { className: "nx-sub", style: { margin: "2px 0 8px" } }, nxFriendSet(friendDocs, t.id).size + " friends", NX_DUTY.has(t.id) && " · ", NX_DUTY.has(t.id) && nxh(NxDutyChip)),
+        fstate && nxh("div", { className: "nx-acts", style: { border: 0, margin: "0 0 6px", padding: 0 } },
+          fstate === "none" && nxh("button", { className: "ojt-btn ojt-btn-primary", onClick: () => act.add(t.id) }, "Add friend"),
+          fstate === "sent" && nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: () => act.remove(t.id) }, "Cancel request"),
+          fstate === "received" && nxh("button", { className: "ojt-btn ojt-btn-primary", onClick: () => act.accept(t.id) }, "Confirm request"),
+          fstate === "received" && nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: () => act.remove(t.id) }, "Delete"),
+          fstate === "friends" && nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: () => act.remove(t.id) }, "✓ Friends · Unfriend")),
+        !edit && nxh("div", null, cur.bio && nxh("p", { className: "ojt-post-body" }, cur.bio), row("Course / department", cur.department), row("Deployed at", dep ? dep.name : null), row("Student ID", canSeeId(cur, viewer, isOwner) ? cur.studentId : null), row("Hometown", cur.hometown), row("Skills", cur.skills), row("Hobbies", cur.hobbies),
+          pct !== null && nxh("div", { className: "nx-miles" }, nxh("div", { className: "nx-miles-top" }, nxh("b", null, "OJT milestones"), nxh("span", null, st.total.toFixed(1) + " of " + cur.requiredHours + " h")),
+            nxh("div", { className: "ojt-progress-track" }, nxh("div", { className: "ojt-progress-fill" + (pct >= 100 ? " complete" : ""), style: { width: pct + "%" } })),
+            nxh("div", { className: "nx-badges" }, NX_MILES.map(m => nxh("span", { key: m[0], className: "nx-badge" + (pct >= m[0] ? " on" : ""), title: m[0] + "% of required hours" }, m[2] + " " + m[1])))),
+          mine && nxh("button", { className: "ojt-btn ojt-btn-primary", style: { marginTop: 10 }, onClick: start }, "Edit profile")),
+        edit && nxh("div", null, nxh("label", { className: "ojt-btn ojt-btn-outline", style: { cursor: "pointer", margin: "8px 0", display: "inline-block" } }, "Change profile photo", nxh("input", { type: "file", accept: "image/*", hidden: true, onChange: photo })),
+          nxh("p", { className: "nx-sub", style: { margin: "4px 0" } }, "Cover color (shown when there's no cover photo)"),
+          nxh("div", { className: "nx-chips" }, NX_COVERS.map(c => nxh("button", { key: c, type: "button", "aria-label": "Cover color " + c, className: "nx-sw" + (f.cover === c ? " on" : ""), style: { background: c }, onClick: () => setF(x => ({ ...x, cover: c })) }))),
+          fld("Nickname", "nickname"), fld("Bio", "bio", 1), fld("Course / department", "department"), fld("Hometown", "hometown"), fld("Skills", "skills"), fld("Hobbies", "hobbies"),
+          nxh("div", { className: "ojt-composer-bar" }, nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: () => setEdit(false) }, "Cancel"), nxh("button", { className: "ojt-btn ojt-btn-primary", onClick: save }, "Save profile"))))),
+    msg && nxh("p", { className: "nx-sub", style: { marginTop: 8 } }, msg),
+    nxh("p", { className: "disp", style: { fontSize: 18, fontWeight: 600, margin: "18px 0 8px" } }, mine ? "My posts and shares" : "Posts and shares"),
+    nxh(PostList, { posts: theirs, byId, viewer, canMod: canModerate, onOpenProfile, setErr: setMsg, empty: nxh("div", { className: "ojt-empty ojt-panel" }, nxh("p", { className: "disp" }, "Nothing to show"), nxh("p", null, mine ? "Things you post or share will appear here." : "No posts you can see yet.")) }),
+    nxh("p", { className: "nx-sub", style: { margin: "16px 0 6px" } }, "Classmates & team"),
+    nxh("div", { className: "nx-chips" }, list.map(x => nxh("button", { key: x.id, className: "nx-chip" + (x.id === t.id ? " on" : ""), onClick: () => { setSel(x.id); setEdit(false); setMsg(""); } }, x.name))));
+}
+
+/* ===== Facebook-style side rails: left = menu + my progress, right = friends / on-duty contacts ===== */
+function NxSideHead({ viewer, trainees, adminSession, departments, onProfile }) {
+  const me = viewer ? (trainees || []).find(t => t.id === viewer.id) : null;
+  if (viewer) return nxh("button", { className: "nx-sidehead", onClick: onProfile },
+    nxh(PersonAvatar, { t: me, name: viewer.name }), nxh("span", { className: "nx-sidehead-txt" }, nxh("b", null, viewer.name), nxh("small", null, "See your profile")));
+  if (adminSession) {
+    const d = (departments || []).find(x => x.id === adminSession.deptId);
+    return nxh("div", { className: "nx-sidehead", style: { cursor: "default" } }, nxh("span", { className: "ojt-avatar-sm" }, "🛡️"),
+      nxh("span", { className: "nx-sidehead-txt" }, nxh("b", null, adminSession.name), nxh("small", null, adminSession.role === "super" ? "Main admin" : "Admin · " + (d ? d.name : "department"))));
+  }
+  return null;
+}
+
+/* the part Facebook doesn't have: your OJT hours as a progress ring, always one glance away */
+function NxSideProgress({ viewer, trainees, stats, departments }) {
+  const me = viewer ? (trainees || []).find(t => t.id === viewer.id) : null;
+  if (!me) return null;
+  const st = stats ? stats(me) : null, req = Number(me.requiredHours) || 0;
+  const pct = st && req ? Math.min(100, st.total / req * 100) : 0;
+  const dep = (departments || []).find(d => d.id === me.deployId);
+  return nxh("div", { className: "nx-sideprog ojt-panel" },
+    nxh("div", { className: "nx-ringp", style: { background: "conic-gradient(var(--ojt-accent) " + pct * 3.6 + "deg, var(--ojt-track) 0)" } }, nxh("span", null, Math.round(pct) + "%")),
+    nxh("div", { style: { minWidth: 0 } }, nxh("b", null, "My OJT hours"), nxh("small", null, st ? st.total.toFixed(1) + " of " + (req || "?") + " h" : "Loading…"), dep && nxh("small", null, "📍 " + dep.name)));
+}
+
+function NxRail({ viewer, trainees, friendDocs, departments, isOwner, manages, onOpen, onNav }) {
+  const list = trainees || [], byId = Object.fromEntries(list.map(t => [t.id, t]));
+  const duty = t => NX_DUTY.has(t.id);
+  const byDuty = (a, b) => (duty(b) ? 1 : 0) - (duty(a) ? 1 : 0) || (a.name || "").localeCompare(b.name || "");
+  const contact = t => nxh("button", { key: t.id, className: "nx-contact", onClick: () => onOpen(t.id) }, nxh(PersonAvatar, { t, name: t.name }), nxh("span", { className: "nx-cname" }, t.name), duty(t) && nxh("small", { className: "nx-cduty" }, "On duty"));
+  const me = viewer ? byId[viewer.id] : null;
+  const fs = viewer ? nxFriendSet(friendDocs, viewer.id) : new Set();
+  const friends = [...fs].map(id => byId[id]).filter(Boolean).sort(byDuty);
+  const reqs = viewer ? (friendDocs || []).filter(f => f.status === "pending" && f.from !== viewer.id && (f.a === viewer.id || f.b === viewer.id)).length : 0;
+  const site = me && me.deployId ? list.filter(t => t.id !== me.id && t.deployId === me.deployId && !fs.has(t.id)).sort(byDuty) : [];
+  const dep = me && (departments || []).find(d => d.id === me.deployId);
+  const mine = isOwner ? list.filter(manages).sort(byDuty) : [];
+  const head = (title, right) => nxh("div", { className: "nx-rail-h" }, nxh("b", null, title), right);
+  return nxh("aside", { className: "nx-rail", "aria-label": "Contacts" },
+    reqs > 0 && nxh("button", { className: "nx-reqcard ojt-panel", onClick: () => onNav("friends") }, nxh("span", { className: "nx-ic" }, "👥"), nxh("span", null, nxh("b", null, reqs + " friend request" + (reqs === 1 ? "" : "s")), nxh("small", null, "Tap to respond"))),
+    viewer && nxh("div", null, head("Friends (" + friends.length + ")", nxh("button", { className: "nx-link", onClick: () => onNav("friends") }, "See all")),
+      friends.length === 0 ? nxh("p", { className: "nx-sub", style: { padding: "0 8px" } }, "No friends yet. ", nxh("button", { className: "nx-link", onClick: () => onNav("friends") }, "Find people")) : friends.slice(0, 14).map(contact)),
+    viewer && site.length > 0 && nxh("div", null, head("Also at " + (dep ? dep.name : "your site")), site.slice(0, 6).map(contact)),
+    isOwner && nxh("div", null, head("Your students (" + mine.length + ")"), mine.length === 0 ? nxh("p", { className: "nx-sub", style: { padding: "0 8px" } }, "No students assigned yet.") : mine.slice(0, 16).map(contact)),
+    !viewer && !isOwner && nxh("p", { className: "nx-sub", style: { padding: "0 8px" } }, "Sign in to see your friends."));
+}
+
+/* ----- Admin hub: super admin manages departments + their admins; a department admin runs their own students ----- */
+function AdminPage({ adminSession, isSuper, trainees, setTrainees, departments, adminDocs, approvals, traineeStats, manages, onOpenTrainee }) {
+  const [err, setErr] = useState(""), [dn, setDn] = useState(""), [an, setAn] = useState({ name: "", username: "", pw: "", deptId: "" }), [rm, setRm] = useState(null), [pw2, setPw2] = useState({}), [mine, setMine] = useState(""), [ok, setOk] = useState("");
+  const list = trainees || [];
+  const dName = id => (departments.find(d => d.id === id) || {}).name || "Unassigned";
+  const setA = k => e => setAn(x => ({ ...x, [k]: e.target.value }));
+  const addDept = async () => {
+    const n = dn.trim(); if (!n) return;
+    if (departments.some(d => d.name.toLowerCase() === n.toLowerCase())) return setErr("That department already exists.");
+    setErr(""); if (await saveDoc("departments", { id: uid(), name: n.slice(0, 60), createdAt: nowISO() }, setErr)) setDn("");
+  };
+  const addAdmin = async () => {
+    const uname = an.username.trim().toLowerCase().replace(/\s+/g, "");
+    if (!an.name.trim() || !uname) return setErr("Enter the admin's name and a username.");
+    if (!an.deptId) return setErr("Pick the department this admin will manage.");
+    if (an.pw.length < 6) return setErr("Password must be at least 6 characters.");
+    if (adminDocs.some(a => (a.username || "").toLowerCase() === uname)) return setErr("That username is taken.");
+    setErr("");
+    const passHash = await hashPin("admin:" + uname + ":" + an.pw);
+    if (await saveDoc("admins", { id: uid(), name: an.name.trim().slice(0, 60), username: uname, passHash, deptId: an.deptId, createdAt: nowISO() }, setErr)) { setAn({ name: "", username: "", pw: "", deptId: "" }); setOk("Admin added. Share the username and password with them."); }
+  };
+  const resetPw = async a => {
+    const pw = pw2[a.id] || ""; if (pw.length < 6) return setErr("New password must be at least 6 characters.");
+    setErr(""); const passHash = await hashPin("admin:" + a.username.toLowerCase() + ":" + pw);
+    if (await saveDoc("admins", { ...a, passHash, updatedAt: nowISO() }, setErr)) { setPw2(x => ({ ...x, [a.id]: "" })); setOk("Password changed for " + a.name + "."); }
+  };
+  const assign = async (t, deptId) => { const u = { ...t, deployId: deptId || null, updatedAt: nowISO() }; setTrainees(l => (l || []).map(x => x.id === u.id ? u : x)); await saveDoc("trainees", u, setErr); };
+  const delDept = async d => {
+    for (const a of adminDocs.filter(x => x.deptId === d.id)) await removeDoc("admins", a.id, setErr);
+    for (const t of list.filter(x => x.deployId === d.id)) await assign(t, "");
+    await removeDoc("departments", d.id, setErr); setRm(null);
+  };
+  const changeMine = async () => {
+    if (mine.length < 6) return setErr("Password must be at least 6 characters.");
+    try { const db = await getDb(); const doc = db.collection("admins").doc(adminSession.id); const cur = await doc.get(); if (!cur.exists) return setErr("Your admin account was removed."); await doc.set({ ...cur.data(), passHash: await hashPin("admin:" + adminSession.username.toLowerCase() + ":" + mine), updatedAt: nowISO() }); setMine(""); setErr(""); setOk("Password changed."); } catch (e) { setErr(dbErrorMessage(e)); }
+  };
+  const sec = (title, sub, ...kids) => nxh("div", { className: "ojt-panel nx-sec" }, nxh("p", { className: "disp", style: { fontSize: 18, fontWeight: 600, margin: "0 0 2px" } }, title), sub && nxh("p", { className: "nx-sub" }, sub), ...kids);
+  const msgs = [err && nxh("p", { key: "e", style: { color: "var(--ojt-danger)", fontSize: 13 } }, err), ok && nxh("p", { key: "o", className: "nx-ok" }, ok)];
+  if (!isSuper) {
+    const roster = list.filter(manages);
+    return nxh("div", { className: "ojt-main-content ojt-page nx-col nx-wide" },
+      nxh("p", { className: "disp", style: { fontSize: 24, fontWeight: 600, margin: "0 0 4px" } }, dName(adminSession.deptId)),
+      nxh("p", { className: "nx-sub" }, "You manage the students deployed here. Signed in as " + adminSession.name + "."), msgs,
+      sec("Your students (" + roster.length + ")", approvals.length ? approvals.length + " time-in request" + (approvals.length === 1 ? "" : "s") + " waiting in Approvals." : "No time-in requests waiting.",
+        roster.length === 0 ? nxh("p", { className: "nx-sub" }, "No students are assigned to this department yet. Ask the main admin to assign them.") :
+          nxh("div", { className: "nx-fgrid" }, roster.map(t => { const s = traineeStats(t), pct = s && t.requiredHours ? Math.min(100, s.total / t.requiredHours * 100) : 0; return nxh("div", { key: t.id, className: "ojt-panel nx-fcard" }, nxh(PersonAvatar, { t, name: t.name, large: true }), nxh("strong", null, t.name), nxh("div", { className: "nx-sub", style: { margin: "2px 0 6px" } }, t.department || " "), NX_DUTY.has(t.id) && nxh(NxDutyChip), nxh("div", { className: "ojt-progress-track", style: { width: "100%" } }, nxh("div", { className: "ojt-progress-fill", style: { width: pct + "%" } })), nxh("div", { className: "nx-sub", style: { margin: "4px 0 8px" } }, s ? s.total.toFixed(1) + " / " + (t.requiredHours || 0) + " h" : "Loading hours…"), nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: () => onOpenTrainee(t) }, "Open attendance")); }))),
+      sec("Change my password", null, nxh("div", { className: "nx-cm" }, nxh("input", { className: "ojt-input", type: "password", placeholder: "New password (6+ characters)", value: mine, onChange: e => setMine(e.target.value) }), nxh("button", { className: "ojt-btn ojt-btn-primary", onClick: changeMine }, "Save"))));
+  }
+  return nxh("div", { className: "ojt-main-content ojt-page nx-col nx-wide" },
+    nxh("p", { className: "disp", style: { fontSize: 24, fontWeight: 600, margin: "0 0 4px" } }, "Departments & admins"),
+    nxh("p", { className: "nx-sub" }, "Create a department for each deployment site, give it its own admin, then assign students."), msgs,
+    sec("Departments", "e.g. Municipal Hall, Call Center",
+      nxh("div", { className: "nx-cm" }, nxh("input", { className: "ojt-input", placeholder: "Department name", maxLength: 60, value: dn, onChange: e => setDn(e.target.value), onKeyDown: e => e.key === "Enter" && addDept() }), nxh("button", { className: "ojt-btn ojt-btn-primary", disabled: !dn.trim(), onClick: addDept }, "Add department")),
+      departments.length === 0 ? nxh("p", { className: "nx-sub", style: { marginTop: 10 } }, "No departments yet.") : departments.map(d => nxh("div", { key: d.id, className: "nx-arow" }, nxh("div", null, nxh("strong", null, d.name), nxh("div", { className: "nx-sub", style: { margin: 0 } }, list.filter(t => t.deployId === d.id).length + " students · " + adminDocs.filter(a => a.deptId === d.id).length + " admin(s)")), nxh("button", { className: "ojt-btn ojt-btn-danger", onClick: () => setRm(d) }, "Remove")))),
+    sec("Department admins", "Each admin only sees and manages students in their own department. They sign in from the 🔒 button with their username and password.",
+      departments.length === 0 ? nxh("p", { className: "nx-sub" }, "Add a department first.") : nxh("div", { className: "nx-aform" },
+        nxh("input", { className: "ojt-input", placeholder: "Full name", value: an.name, onChange: setA("name") }),
+        nxh("input", { className: "ojt-input", placeholder: "Username", autoComplete: "off", value: an.username, onChange: setA("username") }),
+        nxh("input", { className: "ojt-input", type: "password", placeholder: "Password (6+ characters)", autoComplete: "new-password", value: an.pw, onChange: setA("pw") }),
+        nxh("select", { className: "ojt-select", value: an.deptId, onChange: setA("deptId"), "aria-label": "Department" }, nxh("option", { value: "" }, "Choose department…"), departments.map(d => nxh("option", { key: d.id, value: d.id }, d.name))),
+        nxh("button", { className: "ojt-btn ojt-btn-primary", onClick: addAdmin }, "Add admin")),
+      adminDocs.length === 0 ? null : adminDocs.map(a => nxh("div", { key: a.id, className: "nx-arow" }, nxh("div", null, nxh("strong", null, a.name), nxh("div", { className: "nx-sub", style: { margin: 0 } }, "@" + a.username + " · " + dName(a.deptId))), nxh("div", { className: "nx-cm", style: { margin: 0 } }, nxh("input", { className: "ojt-input", type: "password", placeholder: "New password", value: pw2[a.id] || "", onChange: e => setPw2(x => ({ ...x, [a.id]: e.target.value })) }), nxh("button", { className: "ojt-btn ojt-btn-outline", onClick: () => resetPw(a) }, "Reset"), nxh("button", { className: "ojt-btn ojt-btn-danger", onClick: () => removeDoc("admins", a.id, setErr) }, "Remove"))))),
+    sec("Assign students (" + list.length + ")", "Choose where each student is deployed.",
+      list.length === 0 ? nxh("p", { className: "nx-sub" }, "No students yet.") : list.map(t => nxh("div", { key: t.id, className: "nx-arow" }, nxh("div", { style: { display: "flex", gap: 10, alignItems: "center", minWidth: 0 } }, nxh(PersonAvatar, { t, name: t.name }), nxh("div", { style: { minWidth: 0 } }, nxh("strong", null, t.name), nxh("div", { className: "nx-sub", style: { margin: 0 } }, t.department || " "))), nxh("select", { className: "ojt-select", value: t.deployId || "", "aria-label": "Department for " + t.name, onChange: e => assign(t, e.target.value) }, nxh("option", { value: "" }, "Unassigned"), departments.map(d => nxh("option", { key: d.id, value: d.id }, d.name)))))),
+    rm && nxh(ConfirmModal, { title: "Remove " + rm.name + "?", message: "Its admins are removed and its students become unassigned. Attendance records are kept.", onConfirm: () => delDept(rm), onCancel: () => setRm(null) }));
+}
+
 function ChatPage({viewer,trainees}){
   const [groups,setGroups]=useState([]),[room,setRoom]=useState("g:all"),[msgs,setMsgs]=useState([]),[txt,setTxt]=useState(""),[err,setErr]=useState(""),[mk,setMk]=useState(false),[gn,setGn]=useState(""),[gm,setGm]=useState([]),[q,setQ]=useState("");
   const endRef=useRef(null);
@@ -4736,38 +5228,6 @@ function ChatPage({viewer,trainees}){
       nxh("div",{style:{maxHeight:200,overflow:"auto"}},others.map(t=>nxh("label",{key:t.id,className:"nx-room"},nxh("input",{type:"checkbox",checked:gm.includes(t.id),onChange:e=>setGm(g=>e.target.checked?[...g,t.id]:g.filter(x=>x!==t.id))}),t.name))),
       nxh("div",{className:"ojt-composer-bar"},nxh("button",{className:"ojt-btn ojt-btn-outline",onClick:()=>setMk(false)},"Cancel"),nxh("button",{className:"ojt-btn ojt-btn-primary",disabled:!gn.trim()||!gm.length,onClick:make},"Create")))));
 }
-const NX_COVERS=["#F5B301","#4C9AFF","#36B37E","#FF5630","#6554C0","#172B4D"];
-function ProfilePage({viewer,trainees,setTrainees,isOwner}){
-  const [sel,setSel]=useState(viewer?viewer.id:null),[edit,setEdit]=useState(false),[f,setF]=useState({}),[msg,setMsg]=useState("");
-  const list=trainees||[],t=list.find(x=>x.id===sel)||list[0];
-  if(!t)return nxh("p",{className:"nx-sub"},"No profiles yet.");
-  const mine=viewer&&t.id===viewer.id;
-  const set=k=>e=>setF(x=>({...x,[k]:e.target.value}));
-  const start=()=>{setF({nickname:t.nickname||"",bio:t.bio||"",department:t.department||"",hometown:t.hometown||"",skills:t.skills||"",hobbies:t.hobbies||"",cover:t.cover||NX_COVERS[0],photo:t.photo||null});setEdit(true)};
-  const photo=async e=>{const file=e.target.files?.[0];e.target.value="";if(!file)return;try{const p=await resizeImage(file,400);setF(x=>({...x,photo:p}))}catch{setMsg("Couldn't read that photo.")}};
-  const save=async()=>{const u={...t,...f,updatedAt:nowISO()};setTrainees(l=>(l||[]).map(x=>x.id===u.id?u:x));setEdit(false);
-    try{const db=await getDb();await db.collection("trainees").doc(u.id).set(u);setMsg("Profile saved.")}catch(e){setMsg(dbErrorMessage(e))}};
-  const row=(l,v)=>v?nxh("p",{style:{margin:"4px 0",fontSize:14}},nxh("b",null,l+": "),v):null;
-  const fld=(l,k,ta)=>nxh("label",{className:"nx-f"},l,nxh(ta?"textarea":"input",{className:"ojt-input",rows:3,maxLength:ta?300:80,value:f[k]||"",onChange:set(k)}));
-  const cur=edit?{...t,...f}:t;
-  return nxh("div",{className:"ojt-main-content ojt-page",style:{maxWidth:640,margin:"0 auto"}},
-    nxh("p",{className:"disp",style:{fontSize:24,fontWeight:600,margin:"0 0 12px"}},mine?"My profile":"Profile"),
-    nxh("div",{className:"ojt-panel",style:{padding:0,overflow:"hidden"}},
-      nxh("div",{className:"nx-cover",style:{background:cur.cover||NX_COVERS[0]}}),
-      nxh("div",{className:"nx-prof"},nxh(PersonAvatar,{t:cur,large:true}),
-        nxh("h3",{className:"disp",style:{margin:"8px 0 0",fontSize:22}},cur.name,cur.nickname&&nxh("span",{style:{fontWeight:400,color:"var(--ojt-muted)"}}," “"+cur.nickname+"”")),
-        !edit&&nxh("div",null,cur.bio&&nxh("p",{className:"ojt-post-body"},cur.bio),row("Course / department",cur.department),row("Student ID",canSeeId(cur,viewer,isOwner)?cur.studentId:null),row("Hometown",cur.hometown),row("Skills",cur.skills),row("Hobbies",cur.hobbies),
-          mine&&nxh("button",{className:"ojt-btn ojt-btn-primary",style:{marginTop:10},onClick:start},"Edit profile")),
-        edit&&nxh("div",null,nxh("label",{className:"ojt-btn ojt-btn-outline",style:{cursor:"pointer",margin:"8px 0",display:"inline-block"}},"Change photo",nxh("input",{type:"file",accept:"image/*",hidden:true,onChange:photo})),
-          nxh("div",{className:"nx-chips"},NX_COVERS.map(c=>nxh("button",{key:c,type:"button","aria-label":"Cover color "+c,className:"nx-sw"+(f.cover===c?" on":""),style:{background:c},onClick:()=>setF(x=>({...x,cover:c}))}))),
-          fld("Nickname","nickname"),fld("Bio","bio",1),fld("Course / department","department"),fld("Hometown","hometown"),fld("Skills","skills"),fld("Hobbies","hobbies"),
-          nxh("div",{className:"ojt-composer-bar"},nxh("button",{className:"ojt-btn ojt-btn-outline",onClick:()=>setEdit(false)},"Cancel"),nxh("button",{className:"ojt-btn ojt-btn-primary",onClick:save},"Save profile"))))),
-    msg&&nxh("p",{className:"nx-sub",style:{marginTop:8}},msg),
-    nxh("p",{className:"nx-sub",style:{margin:"16px 0 6px"}},"Classmates & team"),
-    nxh("div",{className:"nx-chips"},list.map(x=>nxh("button",{key:x.id,className:"nx-chip"+(x.id===t.id?" on":""),onClick:()=>{setSel(x.id);setEdit(false);setMsg("")}},x.name))));
-}
-
-
 /* ===== Email verification + forgot password (Firebase Authentication) ===== */
 const getAuth = async () => {
   await getDb();
